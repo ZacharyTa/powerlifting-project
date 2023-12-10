@@ -1,5 +1,11 @@
+import Button from "@/components/Button";
+
 const Test = () => {
-  return <div>Hello Worldwawa</div>;
+  return (
+    <>
+      <Button color="white" text="LB" />
+    </>
+  );
 };
 
 export default Test;
