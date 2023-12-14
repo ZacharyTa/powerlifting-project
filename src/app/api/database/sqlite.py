@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 class SQLiteDatabase:
 
-    def __init__(self, db_path="src/app/api/database/usapl.db"):
+    def __init__(self, db_path=r"src/app/api/database/usapl.db"):
         
         self.db_path = db_path
         self.conn = None
