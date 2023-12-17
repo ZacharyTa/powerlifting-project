@@ -33,7 +33,7 @@ class SQLiteDatabase:
                     name TEXT NOT NULL,
                     sanction TEXT,
                     state TEXT,
-                    results INTEGER
+                    url TEXT
                 )""",
                 f"""CREATE TABLE IF NOT EXISTS {self.__lifts_table} (
                     competition_id INTEGER,
@@ -90,7 +90,19 @@ class SQLiteDatabase:
         soup = BeautifulSoup(home_page.content, "html.parser")
 
         #Get list of competitions into pd
-        #pd = (Date, CompID, CompName, Compurl)
+
+        comp_df = pd.DataFrame({
+        'Date': [],
+        'ID': [],
+        'Name': [],
+        'Sanction' : [],
+        'State': [],
+        'Url': []
+        })
+
+        db_df = pd.read_sql_query(f'SELECT competition_id from {self.__competitions_table}', self.conn)
+        db_comp_ids = set(db_df['competition_id'])
+
         comp_list_tbody = soup.find("table", class_="tabledata")
         rows = comp_list_tbody.find_all('tr')
         for row in rows:
@@ -105,32 +117,50 @@ class SQLiteDatabase:
                 else:
                     href_full_link = "No link available"
 
-                extracted_data = [date, href_full_link]
-                if extracted_data[0][8] == "2":
-                    print(extracted_data)
-            # data = [cell.text.strip() for cell in cells]
-            # print(data)
 
-        #See which competitions are not in sqlite database 
-            #pd = Select competition names in database
-            #pd = do a noninterction right side thingy
+                # Only insert data into dataframe for new competitions
+                if int(href_full_link[href_full_link.find("id=") + 3:]) not in db_comp_ids:
+                    data = [href_full_link[href_full_link.find("id=") + 3:]] # CompID
+                    data += [date] # Date
+                    data += [cells[1].text.strip()] # CompName
+                    data += [cells[2].text.strip()] # Sanction
+                    data += [cells[3].text.strip()] # State
+                    data += [href_full_link] # URL
+                
+                    # Insert data into dataframe
+                    comp_df.loc[len(comp_df)] = data
+                    print(comp_df.head())
 
-            #Loop #While pd not empty
-                #1- Insert into competitions table
-                #2- Go into competition result page
-                #3- Insert into Lifts Table
+        #Loop #While pd not empty
+        
+            #1- Insert into competitions table
+        #self.__insert_table(self.__competitions_table, tuple(comp_df.iloc[0]))
+            #2- Go into competition result page
+            #3- Insert into Lifts Table
 
     def execute_query(self, query, params = None):
+        
         cursor = self.conn.cursor()
         if params:
             cursor.execute(query, params)
         else:
             cursor.execute(query)
         return cursor.fetchall()
+    
+    def print_table(self):
+        print(self.execute_query(f"SELECT * FROM {self.__competitions_table}"))
         
-    def __insert_table(self, query, params):
+    def __insert_table(self, table_name, params = (None)) -> None:
         cursor = self.conn.cursor()
-        self.execute_query(query)
+        cursor.execute(f"PRAGMA table_info({table_name})")
+        columns = [info[1] for info in cursor.fetchall()]
+        columns_str = ', '.join(columns)  # Column names separated by commas
+        placeholders = ', '.join(['?'] * len(columns))  # Placeholder '?' for each column
+        query = f"INSERT INTO {table_name} ({columns_str}) VALUES ({placeholders})"
+        print(query)
+        print(params)
+
+        self.execute_query(query, params)
         self.__commit()
         
     def __commit(self):
