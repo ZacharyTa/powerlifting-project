@@ -18,6 +18,7 @@ module.exports = {
       power: {
         white: "#FFFFF",
         black: "#545357",
+        gray: "#BBBABC",
       },
     },
     borderWidth: {
