@@ -3,6 +3,8 @@ import sqlite3
 import os
 import pandas as pd
 from bs4 import BeautifulSoup
+from datetime import datetime
+
 
 class SQLiteDatabase:
 
@@ -62,6 +64,7 @@ class SQLiteDatabase:
                     total INTEGER,
                     points INTEGER,
                     bp_points INTEGER,
+                    drug_tested INTEGER,
                     processed INTEGER,
                     FOREIGN KEY(competition_id) REFERENCES {self.__competitions_table}(competition_id),
                     FOREIGN KEY(lifter_id) REFERENCES {self.__lifters_table}(lifter_id)
@@ -148,7 +151,7 @@ class SQLiteDatabase:
 
         print("Processing Competition table...Waiting")
 
-            #Get list of unprocessed competition lifts into pd
+        #Get list of unprocessed competition lifts into pd
 
         lifts_df = pd.DataFrame({
             'competition_id': [],
@@ -183,42 +186,63 @@ class SQLiteDatabase:
 
         total_unprocessed_comps = len(db_df)
 
+        # Current year
+        current_year = datetime.now().year
+
         # (insert great brief explanation)
         for i in range(0, total_unprocessed_comps):
             print(f"Processing... {i}/{total_unprocessed_comps}")
 
             #Get USPAL competition lifts
-            comp_listing_ur = db_df['url'].iloc(i) #ERROR: requests.exceptions.MissingSchema: Invalid URL '<pandas.core.indexing._iLocIndexer object at 0x11b3b8ef0>': No scheme supplied. Perhaps you meant https://<pandas.core.indexing._iLocIndexer object at 0x11b3b8ef0>?
+            comp_listing_ur = str(db_df.at[i, 'url']) #ERROR: requests.exceptions.MissingSchema: Invalid URL '<pandas.core.indexing._iLocIndexer object at 0x11b3b8ef0>': No scheme supplied. Perhaps you meant https://<pandas.core.indexing._iLocIndexer object at 0x11b3b8ef0>?
             lifts_page = requests.get(comp_listing_ur)
             soup = BeautifulSoup(lifts_page.content, "html.parser")
 
             comp_list_tbody = soup.find("table", id="competition_view_results")
             rows = comp_list_tbody.find_all('tr')
+            isMale = False
             for row in rows:
+                headers = row.find_all("th")
+                if len(headers) > 0 and headers[0].text.strip() == 'Male':
+                    isMale = True
                 cells = row.find_all("td")
                 if len(cells) > 1:  # Ensure there are enough cells in the row
-                    date = cells[0].text.strip()  # Get date from the first cell
-                    href_element = cells[1].find('a')  # Find the 'a' tag in the second cell
+                    print(str(db_df.at[i, 'competition_id'])) # compID
 
-                    for cell in cells:
-                        print(cell.text_strip())
+                    # Get Lifter_ID
+                    lifter_id = -1
+                    href_element = cells[2].find('a')  # Find the 'a' tag in the second cell
+                    if href_element and 'href' in href_element.attrs:
+                        href_link = href_element.attrs['href']
+                        lifter_id = int(href_link[href_link.find("id=") + 3:]) # LifterID
+                    else:
+                        print("Link not available")
+                    print(lifter_id)
 
-                    # if href_element and 'href' in href_element.attrs:
-                    #     href_link = href_element.attrs['href']
-                    #     href_full_link = "https://usapl.liftingdatabase.com/" + href_link  # Construct the full URL if needed
-                    # else:
-                    #     href_full_link = "No link available"
-
-
-                    # Only insert data into dataframe for new competitions
-                    # if int(href_full_link[href_full_link.find("id=") + 3:]) not in db_comp_ids:
-                    #     data = [href_full_link[href_full_link.find("id=") + 3:]] # CompID
-                    #     data += [date] # Date
-                    #     data += [cells[1].text.strip()] # CompName
-                    #     data += [cells[2].text.strip()] # Sanction
-                    #     data += [cells[3].text.strip()] # State
-                    #     data += [href_full_link] # URL
-                    #     data += [0] # Processed (0 = unprocessed, 1 = processed)
+                    print(cells[2].text.strip()) # Name
+                    print("Female" if isMale == False else "Male") # Sex
+                    print(current_year - int(float(cells[3].text.strip())))#age
+                    #age_div
+                    #weight_div
+                    print(cells[1].text.strip()) # Placing
+                    print(cells[3].text.strip()) # YOB
+                    print(cells[4].text.strip()) # team
+                    print(cells[5].text.strip()) # State
+                    print(cells[6].text.strip()) # Lot
+                    print(cells[7].text.strip()) # Weight
+                    print(cells[8].text.strip()) # Squat 1
+                    print(cells[9].text.strip()) # Squat 2
+                    print(cells[10].text.strip()) # Squat 3
+                    print(cells[11].text.strip()) # Squat 1
+                    print(cells[12].text.strip()) # Squat 2
+                    print(cells[13].text.strip()) # Squat 3
+                    print(cells[14].text.strip()) # Squat 1
+                    print(cells[15].text.strip()) # Squat 2
+                    print(cells[16].text.strip()) # Squat 3
+                    print(cells[17].text.strip()) # Total
+                    print(cells[18].text.strip()) # Points
+                    print(cells[19].text.strip()) # BP Points
+                    print(cells[20].text.strip()) # Drug tested
                     
                     #     # Insert data into dataframe
                     #     comp_df.loc[len(comp_df)] = data

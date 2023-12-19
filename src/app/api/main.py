@@ -1,5 +1,7 @@
 import sys
 from database.sqlite import SQLiteDatabase
+import requests
+from bs4 import BeautifulSoup
 
 def main():
     print("Main")
