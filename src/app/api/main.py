@@ -4,8 +4,9 @@ from database.sqlite import SQLiteDatabase
 def main():
     print("Main")
     db = SQLiteDatabase()
-    db.update_db()
-    #print(sys.executable)
+    db.update_comp_db()
+    db.process_comp_db()
+
     #db.print_table()
     print("exitMain")
 

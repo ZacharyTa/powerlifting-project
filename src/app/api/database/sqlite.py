@@ -33,7 +33,8 @@ class SQLiteDatabase:
                     name TEXT NOT NULL,
                     sanction TEXT,
                     state TEXT,
-                    url TEXT
+                    url TEXT,
+                    processed INTEGER
                 )""",
                 f"""CREATE TABLE IF NOT EXISTS {self.__lifts_table} (
                     competition_id INTEGER,
@@ -61,13 +62,15 @@ class SQLiteDatabase:
                     total INTEGER,
                     points INTEGER,
                     bp_points INTEGER,
+                    processed INTEGER,
                     FOREIGN KEY(competition_id) REFERENCES {self.__competitions_table}(competition_id),
                     FOREIGN KEY(lifter_id) REFERENCES {self.__lifters_table}(lifter_id)
                 )""",
                 f"""CREATE TABLE IF NOT EXISTS {self.__lifters_table} (
                     lifter_id INTEGER PRIMARY KEY,
                     name TEXT NOT NULL,
-                    YOB INTEGER
+                    YOB INTEGER,
+                    processed INTEGER
                 )""",
             ]
 
@@ -82,7 +85,9 @@ class SQLiteDatabase:
     def connect(self):
         self.conn = sqlite3.connect(self.db_path)
 
-    def update_db(self):
+    def update_comp_db(self):
+
+        print("Updating Competition table...Waiting")
 
         #Get USPAL competition lifting database
         comp_listing_ur = "https://usapl.liftingdatabase.com/competitions"
@@ -92,12 +97,13 @@ class SQLiteDatabase:
         #Get list of competitions into pd
 
         comp_df = pd.DataFrame({
-        'Date': [],
-        'ID': [],
-        'Name': [],
-        'Sanction' : [],
-        'State': [],
-        'Url': []
+        'competition_id': [],
+        'date': [],
+        'name': [],
+        'sanction' : [],
+        'state': [],
+        'url': [],
+        'processed' : []
         })
 
         db_df = pd.read_sql_query(f'SELECT competition_id from {self.__competitions_table}', self.conn)
@@ -126,17 +132,97 @@ class SQLiteDatabase:
                     data += [cells[2].text.strip()] # Sanction
                     data += [cells[3].text.strip()] # State
                     data += [href_full_link] # URL
+                    data += [0] # Processed (0 = unprocessed, 1 = processed)
                 
                     # Insert data into dataframe
                     comp_df.loc[len(comp_df)] = data
-                    print(comp_df.head())
 
-        #Loop #While pd not empty
-        
-            #1- Insert into competitions table
-        #self.__insert_table(self.__competitions_table, tuple(comp_df.iloc[0]))
-            #2- Go into competition result page
-            #3- Insert into Lifts Table
+        # Batch insert into comp table
+
+        comp_df.to_sql(self.__competitions_table, self.conn, if_exists='append', index=False, chunksize=1000)
+
+        print("Updating Competition table...Success")
+
+    # Insert new lifts data into lifts table from unprocessed competitions
+    def process_comp_db(self):
+
+        print("Processing Competition table...Waiting")
+
+            #Get list of unprocessed competition lifts into pd
+
+        lifts_df = pd.DataFrame({
+            'competition_id': [],
+            'lifter_id': [],
+            'name': [],
+            'sex' : [],
+            'age': [],
+            'age_div': [],
+            'processed' : [],
+            'weight_div': [],
+            'placing': [],
+            'YOB': [],
+            'team': [],
+            'state': [],
+            'lot': [],
+            'weight': [],
+            'squat1': [],
+            'squat2': [],
+            'squat3': [],
+            'bench1': [],
+            'bench2': [],
+            'bench3': [],
+            'deadlift1': [],
+            'deadlift2': [],
+            'deadlift3': [],
+            'total': [],
+            'points': [],
+            'bp_points': [],
+            'processed': []    
+            })
+        db_df = pd.read_sql_query(f'SELECT competition_id, url from {self.__competitions_table} WHERE processed = 0', self.conn)
+
+        total_unprocessed_comps = len(db_df)
+
+        # (insert great brief explanation)
+        for i in range(0, total_unprocessed_comps):
+            print(f"Processing... {i}/{total_unprocessed_comps}")
+
+            #Get USPAL competition lifts
+            comp_listing_ur = db_df['url'].iloc(i) #ERROR: requests.exceptions.MissingSchema: Invalid URL '<pandas.core.indexing._iLocIndexer object at 0x11b3b8ef0>': No scheme supplied. Perhaps you meant https://<pandas.core.indexing._iLocIndexer object at 0x11b3b8ef0>?
+            lifts_page = requests.get(comp_listing_ur)
+            soup = BeautifulSoup(lifts_page.content, "html.parser")
+
+            comp_list_tbody = soup.find("table", id="competition_view_results")
+            rows = comp_list_tbody.find_all('tr')
+            for row in rows:
+                cells = row.find_all("td")
+                if len(cells) > 1:  # Ensure there are enough cells in the row
+                    date = cells[0].text.strip()  # Get date from the first cell
+                    href_element = cells[1].find('a')  # Find the 'a' tag in the second cell
+
+                    for cell in cells:
+                        print(cell.text_strip())
+
+                    # if href_element and 'href' in href_element.attrs:
+                    #     href_link = href_element.attrs['href']
+                    #     href_full_link = "https://usapl.liftingdatabase.com/" + href_link  # Construct the full URL if needed
+                    # else:
+                    #     href_full_link = "No link available"
+
+
+                    # Only insert data into dataframe for new competitions
+                    # if int(href_full_link[href_full_link.find("id=") + 3:]) not in db_comp_ids:
+                    #     data = [href_full_link[href_full_link.find("id=") + 3:]] # CompID
+                    #     data += [date] # Date
+                    #     data += [cells[1].text.strip()] # CompName
+                    #     data += [cells[2].text.strip()] # Sanction
+                    #     data += [cells[3].text.strip()] # State
+                    #     data += [href_full_link] # URL
+                    #     data += [0] # Processed (0 = unprocessed, 1 = processed)
+                    
+                    #     # Insert data into dataframe
+                    #     comp_df.loc[len(comp_df)] = data
+
 
     def execute_query(self, query, params = None):
         
