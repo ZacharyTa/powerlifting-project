@@ -15,6 +15,7 @@ const Test = () => {
         setCurrent={setDivision}
         title="Divisions"
       />
+      <Button color="white" text="LB" />
     </>
   );
 };
