@@ -1,7 +1,12 @@
-import { Inter } from "next/font/google";
+import { Comfortaa } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const comfortaa = Comfortaa({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-comfortaa",
+});
 
 export const metadata = {
   title: "Create Next App",
@@ -12,7 +17,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${inter.className} bg-power-white text-power-black h-screen`}
+        className={`${comfortaa.className} bg-power-white text-power-black h-screen`}
       >
         {children}
       </body>
