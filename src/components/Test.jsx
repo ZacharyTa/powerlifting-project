@@ -1,21 +1,23 @@
 "use client";
 import React from "react";
 import { useState } from "react";
-import Button from "@/components/Button";
+import Toggle from "@/components/Toggle";
 import Select from "@/components/Select";
-import { DIVISIONS } from "@/data/forms/Information.js";
+import { DIVISIONS } from "@/data/forms/Information";
+import { UNITS } from "@/data/forms/Information";
 const Test = () => {
   const [division, setDivision] = useState(null);
+  const [unit, setUnit] = useState(null);
   return (
     <>
-      <Button color="white" text="LB" />
-      <Select
-        options={DIVISIONS}
-        current={division}
-        setCurrent={setDivision}
-        title="Divisions"
+      <Toggle
+        name="Units"
+        color="white"
+        text="LB"
+        objects={UNITS}
+        object={unit}
+        setObject={setUnit}
       />
-      <Button color="white" text="LB" />
     </>
   );
 };
