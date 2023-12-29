@@ -18,6 +18,12 @@ const Test = () => {
         object={unit}
         setObject={setUnit}
       />
+      <Select
+        options={DIVISIONS}
+        current={division}
+        setCurrent={setDivision}
+        title="Divisions"
+      />
     </>
   );
 };
