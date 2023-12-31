@@ -3,7 +3,7 @@ import sqlite3
 import os
 import pandas as pd
 from bs4 import BeautifulSoup
-from datetime import datetime
+from utils.helpers_lifts import *
 
 
 class SQLiteDatabase:
@@ -88,7 +88,7 @@ class SQLiteDatabase:
     def connect(self):
         self.conn = sqlite3.connect(self.db_path)
 
-    def update_comp_db(self):
+    def update_comp_db(self) -> None:
 
         print("Updating Competition table...Waiting")
 
@@ -186,9 +186,6 @@ class SQLiteDatabase:
 
         total_unprocessed_comps = len(db_df)
 
-        # Current year
-        current_year = datetime.now().year
-
         # (insert great brief explanation)
         for i in range(0, total_unprocessed_comps):
             print(f"Processing... {i}/{total_unprocessed_comps}")
@@ -200,30 +197,21 @@ class SQLiteDatabase:
 
             comp_list_tbody = soup.find("table", id="competition_view_results")
             rows = comp_list_tbody.find_all('tr')
-            isMale = False
+            sex = 'unspecified'
+            div = 'unspecified'
             for row in rows:
-                headers = row.find_all("th")
-                if len(headers) > 0 and headers[0].text.strip() == 'Male':
-                    isMale = True
+                sex = getSex(sex, row)
+                div = getDiv(div, row)
                 cells = row.find_all("td")
                 if len(cells) > 1:  # Ensure there are enough cells in the row
                     print(str(db_df.at[i, 'competition_id'])) # compID
-
-                    # Get Lifter_ID
-                    lifter_id = -1
-                    href_element = cells[2].find('a')  # Find the 'a' tag in the second cell
-                    if href_element and 'href' in href_element.attrs:
-                        href_link = href_element.attrs['href']
-                        lifter_id = int(href_link[href_link.find("id=") + 3:]) # LifterID
-                    else:
-                        print("Link not available")
-                    print(lifter_id)
+                    print(getLifterID(cells)) # LifterID
 
                     print(cells[2].text.strip()) # Name
-                    print("Female" if isMale == False else "Male") # Sex
-                    print(current_year - int(float(cells[3].text.strip())))#age
-                    #age_div
-                    #weight_div
+                    print(sex) # Sex
+                    print(getAge((cells[3].text.strip())))#age
+                    print(div) #age_div
+                    print(getWeightDiv(cells[0].text.strip())) #weight_div
                     print(cells[1].text.strip()) # Placing
                     print(cells[3].text.strip()) # YOB
                     print(cells[4].text.strip()) # team
