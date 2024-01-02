@@ -50,7 +50,7 @@ class SQLiteDatabase:
                     YOB INTEGER,
                     team TEXT,
                     state TEXT,
-                    lot INTEGER
+                    lot INTEGER,
                     weight INTEGER,
                     squat1 INTEGER,
                     squat2 INTEGER,
@@ -149,91 +149,118 @@ class SQLiteDatabase:
     # Insert new lifts data into lifts table from unprocessed competitions
     def process_comp_db(self):
 
-        print("Processing Competition table...Waiting")
+        try:
+            print("Processing Competition table...Waiting")
 
-        #Get list of unprocessed competition lifts into pd
+            # Get list of unprocessed competition lifts into pd
 
-        lifts_df = pd.DataFrame({
-            'competition_id': [],
-            'lifter_id': [],
-            'name': [],
-            'sex' : [],
-            'age': [],
-            'age_div': [],
-            'processed' : [],
-            'weight_div': [],
-            'placing': [],
-            'YOB': [],
-            'team': [],
-            'state': [],
-            'lot': [],
-            'weight': [],
-            'squat1': [],
-            'squat2': [],
-            'squat3': [],
-            'bench1': [],
-            'bench2': [],
-            'bench3': [],
-            'deadlift1': [],
-            'deadlift2': [],
-            'deadlift3': [],
-            'total': [],
-            'points': [],
-            'bp_points': [],
-            'processed': []    
-            })
-        db_df = pd.read_sql_query(f'SELECT competition_id, url from {self.__competitions_table} WHERE processed = 0', self.conn)
+            lifts_df = pd.DataFrame({
+                'competition_id': [],
+                'lifter_id': [],
+                'name': [],
+                'sex' : [],
+                'age': [],
+                'age_div': [],
+                'weight_div': [],
+                'placing': [],
+                'YOB': [],
+                'team': [],
+                'state': [],
+                'lot': [],
+                'weight': [],
+                'squat1': [],
+                'squat2': [],
+                'squat3': [],
+                'bench1': [],
+                'bench2': [],
+                'bench3': [],
+                'deadlift1': [],
+                'deadlift2': [],
+                'deadlift3': [],
+                'total': [],
+                'points': [],
+                'bp_points': [],
+                'drug_tested' : []  
+                })
+            db_df = pd.read_sql_query(f'SELECT competition_id, url from {self.__competitions_table} WHERE processed = 0', self.conn)
 
-        total_unprocessed_comps = len(db_df)
+            total_unprocessed_comps = len(db_df)
 
-        # (insert great brief explanation)
-        for i in range(0, total_unprocessed_comps):
-            print(f"Processing... {i}/{total_unprocessed_comps}")
+            # Insert lift data from every unprocessed competition into SQL lifts table
+            for i in range(0, total_unprocessed_comps):
 
-            #Get USPAL competition lifts
-            comp_listing_ur = str(db_df.at[i, 'url']) #ERROR: requests.exceptions.MissingSchema: Invalid URL '<pandas.core.indexing._iLocIndexer object at 0x11b3b8ef0>': No scheme supplied. Perhaps you meant https://<pandas.core.indexing._iLocIndexer object at 0x11b3b8ef0>?
-            lifts_page = requests.get(comp_listing_ur)
-            soup = BeautifulSoup(lifts_page.content, "html.parser")
+                try:
+                    print(f"Processing... {i + 1}/{total_unprocessed_comps}")
 
-            comp_list_tbody = soup.find("table", id="competition_view_results")
-            rows = comp_list_tbody.find_all('tr')
-            sex = 'unspecified'
-            div = 'unspecified'
-            for row in rows:
-                sex = getSex(sex, row)
-                div = getDiv(div, row)
-                cells = row.find_all("td")
-                if len(cells) > 1:  # Ensure there are enough cells in the row
-                    print(str(db_df.at[i, 'competition_id'])) # compID
-                    print(getLifterID(cells)) # LifterID
+                    # Get USPAL competition lifts
+                    comp_listing_url = str(db_df.at[i, 'url'])
+                    competition_id = str(db_df.at[i,"competition_id"])
+                    lifts_page = requests.get(comp_listing_url)
+                    soup = BeautifulSoup(lifts_page.content, "html.parser")
 
-                    print(cells[2].text.strip()) # Name
-                    print(sex) # Sex
-                    print(getAge((cells[3].text.strip())))#age
-                    print(div) #age_div
-                    print(getWeightDiv(cells[0].text.strip())) #weight_div
-                    print(cells[1].text.strip()) # Placing
-                    print(cells[3].text.strip()) # YOB
-                    print(cells[4].text.strip()) # team
-                    print(cells[5].text.strip()) # State
-                    print(cells[6].text.strip()) # Lot
-                    print(cells[7].text.strip()) # Weight
-                    print(cells[8].text.strip()) # Squat 1
-                    print(cells[9].text.strip()) # Squat 2
-                    print(cells[10].text.strip()) # Squat 3
-                    print(cells[11].text.strip()) # Squat 1
-                    print(cells[12].text.strip()) # Squat 2
-                    print(cells[13].text.strip()) # Squat 3
-                    print(cells[14].text.strip()) # Squat 1
-                    print(cells[15].text.strip()) # Squat 2
-                    print(cells[16].text.strip()) # Squat 3
-                    print(cells[17].text.strip()) # Total
-                    print(cells[18].text.strip()) # Points
-                    print(cells[19].text.strip()) # BP Points
-                    print(cells[20].text.strip()) # Drug tested
-                    
-                    #     # Insert data into dataframe
-                    #     comp_df.loc[len(comp_df)] = data
+                    comp_list_tbody = soup.find("table", id="competition_view_results")
+                    rows = comp_list_tbody.find_all('tr')
+                    sex = 'unspecified'
+                    div = 'unspecified'
+                    for row in rows:
+                        sex = getSex(sex, row)
+                        div = getDiv(div, row)
+                        cells = row.find_all("td")
+
+                        if len(cells) > 1:  # Ensure there are enough cells in the row
+
+                            # Get lifts data from html table row
+
+                            data = [str(db_df.at[i, 'competition_id'])] # compID
+                            data += [getLifterID(cells)] # LifterID
+                            data += [cells[2].text.strip()] # Name
+                            data += [sex] # Sex
+                            data += [getAge((cells[3].text.strip()))]#age
+                            data += [div] #age_div
+                            data += [getWeightDiv(cells[0].text.strip())] #weight_div
+                            data += [cells[1].text.strip()] # Placing
+                            data += [cells[3].text.strip()] # YOB
+                            data += [cells[4].text.strip()] # team
+                            data += [cells[5].text.strip()] # State
+                            data += [cells[6].text.strip()] # Lot
+                            data += [cells[7].text.strip()] # Weight
+                            data += [cells[8].text.strip()] # Squat 1
+                            data += [cells[9].text.strip()] # Squat 2
+                            data += [cells[10].text.strip()] # Squat 3
+                            data += [cells[11].text.strip()] # Squat 1
+                            data += [cells[12].text.strip()] # Squat 2
+                            data += [cells[13].text.strip()] # Squat 3
+                            data += [cells[14].text.strip()] # Squat 1
+                            data += [cells[15].text.strip()] # Squat 2
+                            data += [cells[16].text.strip()] # Squat 3
+                            data += [cells[17].text.strip()] # Total
+                            data += [cells[18].text.strip()] # Points
+                            data += [cells[19].text.strip()] # BP Points
+                            data += [cells[20].text.strip()] # Drug tested
+                            
+                            # Insert data into dataframe
+                            lifts_df.loc[len(lifts_df)] = data
+
+                    # Batch insert into comp table
+                    lifts_df.to_sql(self.__lifts_table, self.conn, if_exists='append', index=False, chunksize=1000)
+
+                    # Set processed status to processed
+                    self.execute_query(f'UPDATE {self.__competitions_table} SET processed = 1 WHERE competition_id = {competition_id}')
+
+                    print("Processing Competition table...Success")
+
+                except Exception as e:
+
+                    # Handle exceptions
+                    print("An error occurred during row:", e, str(db_df.at[i, 'url']))
+
+        except Exception as e:
+
+            # Handle exceptions
+            print("An error occurred:", e)
+
+        finally:
+            self.__commit()
 
 
     def execute_query(self, query, params = None):
@@ -263,10 +290,12 @@ class SQLiteDatabase:
         
     def __commit(self):
         if self.conn:
+            print("__commit")
             self.conn.commit()
         
     def __del__(self):
         if self.conn:
+            print("__close")
             self.conn.close()
 
 
