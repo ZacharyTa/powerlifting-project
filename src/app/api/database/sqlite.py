@@ -41,6 +41,7 @@ class SQLiteDatabase:
                 f"""CREATE TABLE IF NOT EXISTS {self.__lifts_table} (
                     competition_id INTEGER,
                     lifter_id INTEGER,
+                    event TEXT,
                     name TEXT,
                     sex TEXT,
                     age INTEGER,
@@ -157,6 +158,7 @@ class SQLiteDatabase:
             lifts_df = pd.DataFrame({
                 'competition_id': [],
                 'lifter_id': [],
+                'event': [],
                 'name': [],
                 'sex' : [],
                 'age': [],
@@ -199,12 +201,19 @@ class SQLiteDatabase:
                     soup = BeautifulSoup(lifts_page.content, "html.parser")
 
                     comp_list_tbody = soup.find("table", id="competition_view_results")
+
+                    # Raise error if table is empty
+                    if not comp_list_tbody.find_all('tr'):
+                        raise ValueError("Empty Competition Lifts Table")
+                    
                     rows = comp_list_tbody.find_all('tr')
+                    event = 'unspecified'
                     sex = 'unspecified'
                     div = 'unspecified'
                     for row in rows:
                         sex = getSex(sex, row)
                         div = getDiv(div, row)
+                        event = getEvent(event, row)
                         cells = row.find_all("td")
 
                         if len(cells) > 1:  # Ensure there are enough cells in the row
@@ -213,11 +222,12 @@ class SQLiteDatabase:
 
                             data = [str(db_df.at[i, 'competition_id'])] # compID
                             data += [getLifterID(cells)] # LifterID
+                            data += [event] # event
                             data += [cells[2].text.strip()] # Name
                             data += [sex] # Sex
-                            data += [getAge((cells[3].text.strip()))]#age
-                            data += [div] #age_div
-                            data += [getWeightDiv(cells[0].text.strip())] #weight_div
+                            data += [getAge((cells[3].text.strip()))] # age
+                            data += [div] # age_div
+                            data += [getWeightDiv(cells[0].text.strip())] # weight_div
                             data += [cells[1].text.strip()] # Placing
                             data += [cells[3].text.strip()] # YOB
                             data += [cells[4].text.strip()] # team
@@ -242,12 +252,18 @@ class SQLiteDatabase:
                             lifts_df.loc[len(lifts_df)] = data
 
                     # Batch insert into comp table
-                    lifts_df.to_sql(self.__lifts_table, self.conn, if_exists='append', index=False, chunksize=1000)
+                    lifts_df.to_sql(self.__lifts_table, self.conn, if_exists='replace', index=False, chunksize=1000)
 
                     # Set processed status to processed
                     self.execute_query(f'UPDATE {self.__competitions_table} SET processed = 1 WHERE competition_id = {competition_id}')
 
                     print("Processing Competition table...Success")
+                
+                except ValueError as ve:
+                    print(ve)
+
+                    # Set processed status to processed
+                    self.execute_query(f'UPDATE {self.__competitions_table} SET processed = 1 WHERE competition_id = {competition_id}')
 
                 except Exception as e:
 
@@ -272,6 +288,32 @@ class SQLiteDatabase:
             cursor.execute(query)
         return cursor.fetchall()
     
+    
+    # Export competition table into specified path
+    def export_comps_table(self, path = None) -> None:
+        """
+        Accepts specified paths (Optional) to export csv file to
+        If path not specified then it will default to self.db_path
+        """
+
+        query = f"SELECT * FROM {self.__competitions_table}"
+        df = pd.read_sql_query(query, self.conn)
+        if path: df.to_csv(path)
+        else: df.to_csv(r"src/app/api/database/usapl_comps.csv")
+
+
+    # Exports lifts table into specified path
+    def export_lifts_table(self, path = None) -> None:
+        """
+        Accepts specified paths (Optional) to export csv file to
+        If path not specified then it will default to self.db_path
+        """
+
+        query = f"SELECT * FROM {self.__lifts_table}"
+        df = pd.read_sql_query(query, self.conn)
+        if path: df.to_csv(path)
+        else: df.to_csv(r"src/app/api/database/usapl_lifts.csv")
+
     def print_table(self):
         print(self.execute_query(f"SELECT * FROM {self.__competitions_table}"))
         

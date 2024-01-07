@@ -41,6 +41,26 @@ def getSex(sex: str, row: BeautifulSoup) -> str:
         print("Index Error at getSex()")
         return sex
     
+def getEvent(event: str, row: BeautifulSoup) -> str:
+    """
+    Takes row argument after find_all table rows in competition lifts table
+    Returns division located in html table header
+    """
+
+    try:
+        events = {'Bench press', 'Deadlift', 'Powerlifting'}
+        headers = row.find_all("th", class_="competition_view_event")
+        if len(headers) > 0 and headers[0].text.strip() in events:
+            return headers[0].text.strip()
+        else:
+            return event
+    
+    except(IndexError):
+        print("Index Error at getDiv()")
+        raise(ValueError)
+    except Exception as e:
+        print(f"Error: {e}")
+    
 def getDiv(div: str, row: BeautifulSoup) -> str:
     """
     Takes row argument after find_all table rows in competition lifts table
