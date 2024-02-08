@@ -16,9 +16,11 @@ module.exports = {
     },
     colors: {
       power: {
-        white: "#FFFFFF",
-        black: "#545357",
-        gray: "#BBBABC",
+        "red-100": "#EF233C",
+        "red-200": "#D80032",
+        white: "#EDF2F4",
+        black: "#2B2D42",
+        gray: "#D9D9D9",
       },
     },
     borderWidth: {
