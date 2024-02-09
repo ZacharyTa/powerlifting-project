@@ -1,6 +1,5 @@
 import { Nunito } from "next/font/google";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -20,7 +19,6 @@ export default function RootLayout({ children }) {
       <body
         className={`${nunito.className} bg-power-white text-power-black h-screen`}
       >
-        <Navigation />
         {children}
       </body>
     </html>
