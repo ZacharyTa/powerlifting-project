@@ -1,3 +1,5 @@
+import Calculator from "@/components/Calculator";
+
 const Page = ({ title, id, description }) => {
   return (
     <div
@@ -8,7 +10,9 @@ const Page = ({ title, id, description }) => {
         <div className="text-8xl font-bold mb-5 leading-snug">{title}</div>
         <div>{description}</div>
       </div>
-      <div></div>
+      <div className="col-span-2">
+        <Calculator />
+      </div>
     </div>
   );
 };
