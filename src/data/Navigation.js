@@ -15,20 +15,24 @@ export const COMPARE = [
     ref: "#start",
   },
   {
-    name: "all",
-    ref: "#all",
+    name: "squat",
+    ref: "#squat",
   },
   {
-    name: "weight",
-    ref: "#weight",
+    name: "bench",
+    ref: "#bench",
   },
   {
-    name: "age",
-    ref: "#age",
+    name: "deadlift",
+    ref: "#deadlift",
   },
   {
-    name: "end",
-    ref: "#end",
+    name: "total",
+    ref: "#total",
+  },
+  {
+    name: "conclusion",
+    ref: "#conclusion",
   },
 ];
 
