@@ -1,6 +1,9 @@
 import Calculator from "@/components/Calculator";
+import Graph from "@/components/compare/Graph";
+import Percentage from "@/components/compare/Percentage";
+import { Bs6Square } from "react-icons/bs";
 
-const Page = ({ title, id, description }) => {
+const Page = ({ title, id, description, right }) => {
   return (
     <div
       id={id}
@@ -10,9 +13,7 @@ const Page = ({ title, id, description }) => {
         <div className="text-8xl font-bold mb-5 leading-snug">{title}</div>
         <div>{description}</div>
       </div>
-      <div className="col-span-2">
-        <Calculator />
-      </div>
+      <div className="col-span-2">{right}</div>
     </div>
   );
 };
