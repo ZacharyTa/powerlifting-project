@@ -1,0 +1,17 @@
+age_div_id,age_div,min_age,max_age
+1,Youth 1,8,10
+2,Youth 2,10,12
+3,Youth 3,12,14
+4,Teen 1,14,16
+5,Teen 2,16,18
+6,Teen 3,18,20
+7,Junior,20,24
+8,Master 1,40,50
+9,Master 2,50,60
+10,Master 3,60,70
+11,Master 4,70,80
+12,Master 5,80,90
+13,Master 6,90,100
+14,Master 7,100,110
+15,Open,24,40
+255,Unknown,0,0
