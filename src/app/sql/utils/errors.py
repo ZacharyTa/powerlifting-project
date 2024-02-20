@@ -7,7 +7,6 @@ class EmptyCompTableError(Exception):
         Takes competition ID from the empty competition table as an argument
         Error Message to print is Optional
         """
-
         self.competition_id = competition_id
         self.message = message
 
