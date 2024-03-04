@@ -1,4 +1,6 @@
-import mysql from 'mysql2/promise';
+// import mysql from 'mysql2/promise';
+// import mysql from 'mysql2';
+const mysql = require("mysql2/promise");
 import fs from 'fs';
 import path from 'path';
 require('dotenv').config();
@@ -22,8 +24,9 @@ export default async function handler(req, res) {
     }
 
     // Connect to the MySQL database
-    const connection = await mysql.createConnection({
-        host: process.env.DB,
+    const connection = mysql.createPool({
+        port: process.env.DB_PORT,
+        host: process.env.DB_HOST,
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
@@ -31,6 +34,8 @@ export default async function handler(req, res) {
             ca: ca,
             key: key,
             cert: cert,
+            // Bypass verification False (development only): Remove later
+            rejectUnauthorized: true,
         },
     });
 
@@ -39,6 +44,8 @@ export default async function handler(req, res) {
     const [rows] = await connection.execute('SELECT 1');
     // Close the database connection
     await connection.end();
+
+    res.status(200).json(rows);
     // Send a response back to the client
-    res.status(200).json({ message: 'Connection to database was successful' });
+    //res.status(200).json({ message: 'Connection to database was successful' });
 }
