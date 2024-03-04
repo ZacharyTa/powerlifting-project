@@ -1,8 +1,6 @@
 import mysql from 'mysql2/promise';
 import fs from 'fs';
 import path from 'path';
-require('dotenv').config();
-import 'dotenv/config';
 
 export async function query({ query, values = [] }) {
 
