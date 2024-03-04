@@ -25,7 +25,7 @@ export async function query({ query, values = [] }) {
   }
   try {
     // Connect to the MySQL database
-    const db_connection = mysql.createPool({
+    const connection = mysql.createPool({
       port: process.env.DB_PORT,
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
@@ -40,7 +40,7 @@ export async function query({ query, values = [] }) {
       },
     });
 
-    const [results] = await db_connection.execute(query, values);
+    const [results] = await connection.execute(query, values);
 
     return results;
   } catch (error) {
