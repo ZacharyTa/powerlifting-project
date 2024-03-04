@@ -10,11 +10,11 @@ jobs:
 
     steps:
       - name: Checkout Code
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
       - name: Install NPM dependencies
-      - run: npm i
+        run: npm i
       - name: Run Formatting
-      - run: npm run check
+        run: npm run check
 
   lint:
     name: linting
@@ -22,11 +22,11 @@ jobs:
 
     steps:
       - name: Checkout Code
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
       - name: Install NPM dependencies
-      - run: npm i
+        run: npm i
       - name: Run ESLint
-      - run: npm run lint
+        run: npm run lint
 
   build:
     name: build
@@ -34,8 +34,8 @@ jobs:
 
     steps:
       - name: Checkout Code
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
       - name: Install NPM dependencies
-      - run: npm i
+        run: npm i
       - name: Build Project
-      - run: npm run build
+        run: npm run build
