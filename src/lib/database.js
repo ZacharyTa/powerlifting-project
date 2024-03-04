@@ -44,31 +44,3 @@ export async function query({ query, values = [] }) {
         throw Error(error.message);
     }
 }
-
-
-// The replay may be late. But for future reference, the issue is that the transaction only works in a single connection but not in a pool. So getConnection() should be used first to get a connection from the pool. Example below:
-
-// const mysql = require('mysql2/promise'); 
-// const pool = mysql.createPool({...});
-
-// let conn = null;
-// try {
-//   conn = await pool.getConnection();
-//   await conn.query("START TRANSACTION");
-//   const [response, meta] = await conn.query("SELECT * FROM xxx FOR UPDATE");
-//   await conn.execute("INSERT INTO xxxxxx");
-//   await conn.query("COMMIT");
-// } catch (error) {
-//   if (conn) await conn.query("ROLLBACK");
-//   throw error;
-// } finally {
-//   if (conn) conn.release();
-// }
-
-// const connection = await pool.getConnection();
-// const username = req.query.username; // Assuming username comes from query parameter
-
-// const query = `SELECT * FROM users WHERE username = ?`;
-// const [rows] = await connection.execute(query, [username]);
-
-// await connection.release();
