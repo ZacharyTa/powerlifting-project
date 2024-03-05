@@ -31,12 +31,12 @@ export default async function handler(req, res) {
       "AND weight_div_id = ? " +
       ") * 100 " +
       ") AS percentage_of_lifters_stronger_than_x ";
-    // res.status(200).json({compare_query});
+
     const results = await query({
       query: compare_query,
       values: [total, ageDivID, weightDivID, ageDivID, weightDivID],
     });
+
     res.status(200).json({ compare_lifts: results });
-    //return results;
   }
 }
