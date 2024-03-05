@@ -7,8 +7,6 @@ const getWeightDivID = async (sex, weight, age) => {
     __dirname,
     "..",
     "..",
-    "..",
-    "..",
     "src",
     "app",
     "sql",
