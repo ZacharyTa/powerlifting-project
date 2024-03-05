@@ -16,7 +16,7 @@ const getWeightDivID = async (sex, weight, age) => {
     "weight_div.csv",
   );
 
-  let isYouth = age < 14 ? 1 : 0; // Determine if participant is in youth division
+  const isYouth = age < 14 ? 1 : 0; // Determine if participant is in youth division
 
   return new Promise((resolve) => {
     let weightDivID = "255"; // Default ID if not found

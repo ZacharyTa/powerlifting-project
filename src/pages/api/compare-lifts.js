@@ -7,9 +7,9 @@ export default async function handler(req, res) {
     // Hardcoded for testing development purposes (Forms data will be used here)
     let age = 23;
     let sex = 0;
-    let weight = 54.2;
+    let weight = 62;
     let bench = 100;
-    let squat = 300;
+    let squat = 100;
     let deadlift = 100;
     let total = bench + squat + deadlift;
 
