@@ -1,0 +1,41 @@
+name: PowerLifting Project
+on:
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  format:
+    name: formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Install NPM dependencies
+        run: npm i
+      - name: Run Formatting
+        run: npm run check
+
+  lint:
+    name: linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Install NPM dependencies
+        run: npm i
+      - name: Run ESLint
+        run: npm run lint
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Install NPM dependencies
+        run: npm i
+      - name: Build Project
+        run: npm run build
