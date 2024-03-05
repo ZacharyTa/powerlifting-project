@@ -10,9 +10,10 @@ const Compare = () => {
     command: "SELECT * FROM lifts_table WHERE age < ? LIMIT 10;",
     values: [20],
   });
+
+  console.log(test);
   return (
     <Protected>
-      console.log(test);
       <Page
         id="start"
         title="Let's get started"
