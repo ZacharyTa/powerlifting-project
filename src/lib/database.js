@@ -1,9 +1,6 @@
 import mysql from "mysql2/promise";
 import fs from "fs";
 import path from "path";
-import mysql from "mysql2/promise";
-import fs from "fs";
-import path from "path";
 
 export async function query({ query, values = [] }) {
   const caPath = path.resolve(process.env.SSL_CA_PATH);
