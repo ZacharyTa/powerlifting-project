@@ -41,7 +41,6 @@ export async function query({ query, values = [] }) {
     });
 
     const [results] = await connection.execute(query, values);
-
     return results;
   } catch (error) {
     throw Error(error.message);
