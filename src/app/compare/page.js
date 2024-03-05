@@ -6,12 +6,10 @@ import { Bs6Square } from "react-icons/bs";
 import { api } from "@/utils/api";
 
 const Compare = () => {
-  const test = api({
+  api({
     command: "SELECT * FROM lifts_table WHERE age < ? LIMIT 10;",
     values: [20],
-  });
-
-  console.log(test);
+  }).then((response) => console.log(response));
   return (
     <Protected>
       <Page

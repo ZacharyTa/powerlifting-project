@@ -36,7 +36,7 @@ export async function query({ query, values = [] }) {
         key: key,
         cert: cert,
         // Bypass verification False (development only): Remove later
-        rejectUnauthorized: true,
+        rejectUnauthorized: false,
       },
     });
 
