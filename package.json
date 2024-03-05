@@ -10,13 +10,10 @@
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "check": "npx prettier --check \"src/**/*.{js,jsx}\"",
     "prepare": "husky install",
-    "test" : "jest"
+    "test": "jest"
   },
   "dependencies": {
     "csv-parser": "^3.0.0",
-    "dotenv": "^16.4.5",
-    "echarts": "^5.5.0",
-    "echarts-for-react": "^3.0.2",
     "mysql": "^2.18.1",
     "mysql2": "^3.9.2",
     "next": "14.0.3",
