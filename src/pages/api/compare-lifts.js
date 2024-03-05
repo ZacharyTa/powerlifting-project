@@ -5,20 +5,20 @@ import getWeightDivID from "@/utils/getWeightDivID";
 export default async function handler(req, res) {
   if (req.method === "GET") {
     // Hardcoded for testing development purposes (Forms data will be used here)
-    let age = 23;
-    let sex = 0;
-    let weight = 62;
-    let bench = 100;
-    let squat = 100;
-    let deadlift = 100;
-    let total = bench + squat + deadlift;
+    const age = 23;
+    const sex = 0;
+    const weight = 62;
+    const bench = 100;
+    const squat = 100;
+    const deadlift = 100;
+    const total = bench + squat + deadlift;
 
     // Get the age_div_id and weight_div_id
     const ageDivID = await getAgeDivID(age);
     const weightDivID = await getWeightDivID(sex, weight, age);
 
-    //Calculate the percentage of lifters stronger than the user within the same age and weight division
-    let compare_query =
+    // Calculate the percentage of lifters stronger than the user within the same age and weight division
+    const compare_query =
       "SELECT " +
       "(" +
       "(SELECT COUNT(DISTINCT lifter_id) FROM lifts_table  " +
