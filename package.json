@@ -9,7 +9,8 @@
     "lint": "next lint",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "check": "npx prettier --check \"src/**/*.{js,jsx}\"",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test" : "jest"
   },
   "dependencies": {
     "csv-parser": "^3.0.0",
@@ -17,7 +18,6 @@
     "echarts": "^5.5.0",
     "echarts-for-react": "^3.0.2",
     "mysql": "^2.18.1",
-    "mysql2": "^3.9.2",
     "mysql2": "^3.9.2",
     "next": "14.0.3",
     "openssl": "^2.0.0",
@@ -38,6 +38,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.3",
+    "jest": "^29.7.0",
     "lint-staged": "^15.1.0",
     "postcss": "^8",
     "prettier": "^3.1.0",
