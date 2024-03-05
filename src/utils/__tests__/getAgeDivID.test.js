@@ -4,20 +4,25 @@ describe("getAgeDivID", () => {
   it("should return the correct age division ID", async () => {
     // Test case 1: age within the age division range
     const age1 = 17;
-    const expectedID1 = "5"; // Replace with the expected age division ID
+    const expectedID1 = "5";
     const result1 = await getAgeDivID(age1);
     expect(result1).toBe(expectedID1);
 
-    // // Test case 2: age below minimum
-    // const age2 = 10;
-    // const expectedID2 = "255"; // Replace with the default age division ID
-    // const result2 = await getAgeDivID(age2);
-    // expect(result2).toBe(expectedID2);
+    const age2 = 109;
+    const expectedID2 = "14";
+    const result2 = await getAgeDivID(age2);
+    expect(result2).toBe(expectedID2);
 
-    // // Test case 3: age above maximum
-    // const age3 = 40;
-    // const expectedID3 = "255"; // Replace with the default age division ID
-    // const result3 = await getAgeDivID(age3);
-    // expect(result3).toBe(expectedID3);
+    // Test case 2: age below minimum
+    const age3 = 7;
+    const expectedID3 = "255"; //255 is the default ID if not found
+    const result3 = await getAgeDivID(age3);
+    expect(result3).toBe(expectedID3);
+
+    // Test case 3: age above maximum
+    const age4 = 111;
+    const expectedID4 = "255"; //255 is the default ID if not found
+    const result4 = await getAgeDivID(age4);
+    expect(result4).toBe(expectedID4);
   });
 });
