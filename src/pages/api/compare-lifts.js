@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     const weightDivID = await getWeightDivID(sex, weight, age);
 
     // Calculate the percentage of lifters stronger than the user within the same age and weight division
-    const compare_query =
+    const compareQuery =
       "SELECT " +
       "(" +
       "(SELECT COUNT(DISTINCT lifter_id) FROM lifts_table  " +
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
       ") AS percentage_of_lifters_stronger_than_x ";
 
     const results = await query({
-      query: compare_query,
+      query: compareQuery,
       values: [total, ageDivID, weightDivID, ageDivID, weightDivID],
     });
 
