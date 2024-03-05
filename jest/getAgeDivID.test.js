@@ -1,4 +1,4 @@
-const getAgeDivID = require("../getAgeDivID");
+const getAgeDivID = require("../src/utils/getAgeDivID");
 
 describe("getAgeDivID", () => {
   jest.mock("path", () => ({

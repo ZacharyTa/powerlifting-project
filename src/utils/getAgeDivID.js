@@ -3,22 +3,20 @@ const fs = require("fs");
 const path = require("path");
 
 const getAgeDivID = async (age) => {
-  // Get the path to the age_div.csv file
-
   // Loop and add ".." until path is at /src folder
   let ageDivPath = __dirname;
-  while (!ageDivPath.endsWith("src")) {
+  while (!ageDivPath.endsWith("powerlifting-project")) {
     ageDivPath = path.resolve(ageDivPath, "..");
   }
   ageDivPath = path.resolve(
     ageDivPath,
+    "src",
     "app",
     "sql",
     "database",
     "age_div.csv",
   );
 
-  console.log(__dirname);
   return new Promise((resolve) => {
     let ageDivID = "255"; // Default ID if not found
 

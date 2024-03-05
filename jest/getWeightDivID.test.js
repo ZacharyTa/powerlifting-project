@@ -1,4 +1,4 @@
-const getWeightDivID = require("../getWeightDivID");
+const getWeightDivID = require("../src/utils/getWeightDivID");
 
 describe("getWeightDivID", () => {
   it("should return the correct weight division ID", async () => {
