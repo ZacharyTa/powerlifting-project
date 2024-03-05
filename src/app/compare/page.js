@@ -3,8 +3,13 @@ import Protected from "@/components/Protected";
 import Percentage from "@/components/compare/Percentage";
 import Calculator from "@/components/Calculator";
 import { Bs6Square } from "react-icons/bs";
+import { api } from "@/utils/api";
 
 const Compare = () => {
+  api({
+    command: "SELECT * FROM lifts_table WHERE age < ? LIMIT 10;",
+    values: [20],
+  }).then((response) => console.log(response));
   return (
     <Protected>
       <Page
