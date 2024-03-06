@@ -21,54 +21,79 @@ export default async function handler(req, res) {
     const compareQuery = `
       SELECT
       (
+        -- Get Percent Total
         (SELECT COUNT(DISTINCT lifter_id) FROM lifts_table
-        WHERE ${total} > total
-        AND age_div_id = ${ageDivID} 
-        AND weight_div_id = ${weightDivID}
+        WHERE ? > total
+        AND age_div_id = ? 
+        AND weight_div_id = ?
         ) /
         (SELECT COUNT(DISTINCT lifter_id) FROM lifts_table
-        WHERE age_div_id = ${ageDivID}
-        AND weight_div_id = ${weightDivID}
+        WHERE age_div_id = ?
+        AND weight_div_id = ?
         ) * 100
       ) AS percentStrongerTotal,
       (
+        -- Get Percent Bench
         (SELECT COUNT(DISTINCT lifter_id) FROM lifts_table
-        WHERE ${bench} > bench
-        AND age_div_id = ${ageDivID} 
-        AND weight_div_id = ${weightDivID}
+        WHERE ? > bench
+        AND age_div_id = ? 
+        AND weight_div_id = ?
         ) /
         (SELECT COUNT(DISTINCT lifter_id) FROM lifts_table
-        WHERE age_div_id = ${ageDivID}
-        AND weight_div_id = ${weightDivID}
+        WHERE age_div_id = ?
+        AND weight_div_id = ?
         ) * 100
       ) AS percentStrongerBench,
       (
+        -- Get Percent Squat
         (SELECT COUNT(DISTINCT lifter_id) FROM lifts_table
-        WHERE ${squat} > squat
-        AND age_div_id = ${ageDivID} 
-        AND weight_div_id = ${weightDivID}
+        WHERE ? > squat
+        AND age_div_id = ?
+        AND weight_div_id = ?
         ) /
         (SELECT COUNT(DISTINCT lifter_id) FROM lifts_table
-        WHERE age_div_id = ${ageDivID}
-        AND weight_div_id = ${weightDivID}
+        WHERE age_div_id = ?
+        AND weight_div_id = ?
         ) * 100
       ) AS percentStrongerSquat,
       (
+        -- Get Percent Deadlift
         (SELECT COUNT(DISTINCT lifter_id) FROM lifts_table
-        WHERE ${deadlift} > deadlift
-        AND age_div_id = ${ageDivID} 
-        AND weight_div_id = ${weightDivID}
+        WHERE ? > deadlift
+        AND age_div_id = ?
+        AND weight_div_id = ?
         ) /
         (SELECT COUNT(DISTINCT lifter_id) FROM lifts_table
-        WHERE age_div_id = ${ageDivID}
-        AND weight_div_id = ${weightDivID}
+        WHERE age_div_id = ?
+        AND weight_div_id = ?
         ) * 100
       ) AS percentStrongerDeadlift
     ;`;
 
     const results = await query({
       query: compareQuery,
-      values: [total, ageDivID, weightDivID, ageDivID, weightDivID],
+      values: [
+        total,
+        ageDivID,
+        weightDivID,
+        ageDivID,
+        weightDivID, // Total
+        bench,
+        ageDivID,
+        weightDivID,
+        ageDivID,
+        weightDivID, // Bench
+        squat,
+        ageDivID,
+        weightDivID,
+        ageDivID,
+        weightDivID, // Squat
+        deadlift,
+        ageDivID,
+        weightDivID,
+        ageDivID,
+        weightDivID, // Deadlift
+      ],
     });
 
     // Round percentages to 1 decimal places
