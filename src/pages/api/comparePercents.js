@@ -73,26 +73,26 @@ export default async function handler(req, res) {
     const results = await query({
       query: compareQuery,
       values: [
-        total,
+        total, // Total
         ageDivID,
         weightDivID,
         ageDivID,
-        weightDivID, // Total
-        bench,
+        weightDivID,
+        bench, // Bench
         ageDivID,
         weightDivID,
         ageDivID,
-        weightDivID, // Bench
-        squat,
+        weightDivID,
+        squat, // Squat
         ageDivID,
         weightDivID,
         ageDivID,
-        weightDivID, // Squat
-        deadlift,
+        weightDivID,
+        deadlift, // Deadlift
         ageDivID,
         weightDivID,
         ageDivID,
-        weightDivID, // Deadlift
+        weightDivID,
       ],
     });
 
