@@ -73,7 +73,9 @@ export default async function handler(req, res) {
 
     // Round percentages to 1 decimal places
     for (const key in results[0]) {
-      results[0][key] = parseFloat(results[0][key]).toFixed(1);
+      if (results[0].hasOwnProperty(key)) {
+        results[0][key] = parseFloat(results[0][key]).toFixed(1);
+      }
     }
 
     res.status(200).json({ compareLifts: results });
