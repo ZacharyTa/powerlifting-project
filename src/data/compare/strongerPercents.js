@@ -36,11 +36,12 @@ export default async function getPercentStronger(
     ],
   });
 
-  // Map the results to an object
-  const percentStronger = results.map((result) => ({
-    liftType: result.liftType,
-    percentStronger: parseFloat(result.percentStronger).toFixed(1),
-  }));
+  // Round percentages to 1 decimal place
+  for (const key in results[0]) {
+    if (results[0].hasOwnProperty(key)) {
+      results[0][key] = parseFloat(results[0][key]).toFixed(1);
+    }
+  }
 
   return results;
 }
