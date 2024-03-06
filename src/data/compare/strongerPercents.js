@@ -9,31 +9,24 @@ export default async function getPercentStronger(
   ageDivID,
   weightDivID,
 ) {
+  // Define the parameters for each lift type
+  const params = [total, bench, squat, deadlift];
+
+  // Create an array for each lift type and concatenate them
+  const values = [].concat(
+    ...params.map((lift) => [
+      lift,
+      ageDivID,
+      weightDivID,
+      ageDivID,
+      weightDivID,
+    ]),
+  );
+
   // Execute the combined query
   const results = await query({
     query: combinedSQLQuery,
-    values: [
-      total,
-      ageDivID,
-      weightDivID,
-      ageDivID,
-      weightDivID,
-      bench,
-      ageDivID,
-      weightDivID,
-      ageDivID,
-      weightDivID,
-      squat,
-      ageDivID,
-      weightDivID,
-      ageDivID,
-      weightDivID,
-      deadlift,
-      ageDivID,
-      weightDivID,
-      ageDivID,
-      weightDivID,
-    ],
+    values,
   });
 
   // Round percentages to 1 decimal place
