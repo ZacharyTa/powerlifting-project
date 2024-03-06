@@ -23,7 +23,10 @@ const getAgeDivID = async (age) => {
     fs.createReadStream(ageDivPath)
       .pipe(csv())
       .on("data", (row) => {
-        if (age >= parseInt(row.min_age) && age < parseInt(row.max_age)) {
+        if (
+          parseInt(age) >= parseInt(row.min_age) &&
+          parseInt(age) < parseInt(row.max_age)
+        ) {
           ageDivID = row.age_div_id;
         }
       })
