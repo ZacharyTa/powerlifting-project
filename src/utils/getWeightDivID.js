@@ -3,18 +3,9 @@ const fs = require("fs");
 const path = require("path");
 
 const getWeightDivID = async (sex, weight, age) => {
-  // Dynamically find the path to the age_div.csv file (workaround for Jest testing environment)
-  let weightDivPath = __dirname;
-  while (!weightDivPath.endsWith("powerlifting-project")) {
-    weightDivPath = path.resolve(weightDivPath, "..");
-  }
-  weightDivPath = path.resolve(
-    weightDivPath,
-    "src",
-    "app",
-    "sql",
-    "database",
-    "weight_div.csv",
+  const weightDivPath = path.resolve(
+    process.cwd(),
+    "src/app/sql/database/weight_div.csv",
   );
 
   const isYouth = parseInt(age) < 14 ? 1 : 0; // Determine if participant is in youth division

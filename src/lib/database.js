@@ -35,7 +35,6 @@ export async function query({ query, values = [] }) {
         rejectUnauthorized: false,
       },
     });
-
     const [results] = await connection.execute(query, values);
     return results;
   } catch (error) {
