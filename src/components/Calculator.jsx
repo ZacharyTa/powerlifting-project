@@ -2,22 +2,16 @@
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import Radio from "@/components/Radio";
-import { SEX } from "@/data/calculator/Calculations";
+import { ATTRIBUTES, SEX } from "@/data/calculator/Calculations";
 import { useState } from "react";
+
 const Calculator = () => {
-  const [current, setCurrent] = useState(null);
-  const [data, setData] = useState({
-    age: '',
-    current: '',
-    weight: '',
-    squat: '',
-    bench: '',
-    deadlift: '',
-  });
+  const [current, setCurrent] = useState(SEX);
+  const [data, setData] = useState(ATTRIBUTES);
 
 
   const handleSubmit = async () => {
-    const response = await fetch(`/api/comparePercents?age=${data.age}&sex=${"0"}&weight=${data.weight}&bench=${data.bench}&squat=${data.squat}&deadlift=${data.deadlift}`, {
+    const response = await fetch(`/api/comparePercents?age=${data.age}&sex=${current}&weight=${data.weight}&bench=${data.bench}&squat=${data.squat}&deadlift=${data.deadlift}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -33,10 +27,12 @@ const Calculator = () => {
         <Input name="age" maxLength={3} data={data} setData={setData} />
         <Radio options={SEX} current={current} setCurrent={setCurrent} />
       </div>
-      <Input name="weight" maxLength={4} data={data} setData={setData} />
-      <Input name="squat(kg)" maxLength={4} data={data} setData={setData} />
-      <Input name="bench(kg)" maxLength={4} data={data} setData={setData} />
-      <Input name="deadlift(kg)" maxLength={4} data={data} setData={setData} />
+      <>
+        <Input name="weight" maxLength={4} data={data} setData={setData} />
+        <Input name="squat" maxLength={4} data={data} setData={setData} />
+        <Input name="bench" maxLength={4} data={data} setData={setData} />
+        <Input name="deadlift" maxLength={4} data={data} setData={setData} />
+      </>
 
       <Button name="Submit" onClick={handleSubmit}/>
     </div>
