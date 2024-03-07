@@ -10,17 +10,28 @@ const Calculator = ({ onCalculate }) => {
   const [data, setData] = useState(ATTRIBUTES);
 
   const handleSubmit = async () => {
-    const response = await fetch(
-      `/api/comparePercents?age=${data.age}&sex=${current}&weight=${data.weight}&bench=${data.bench}&squat=${data.squat}&deadlift=${data.deadlift}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+    try {
+      const response = await fetch(
+        `/api/comparePercents?age=${data.age}&sexStr=${current}&weight=${data.weight}&bench=${data.bench}&squat=${data.squat}&deadlift=${data.deadlift}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      },
-    );
-    const responseData = await response.json();
-    onCalculate(responseData.compareLifts[0]);
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`HTTP error: status: ${response.status}`);
+      }
+
+      // Pass the response data to the onCalculate function
+      onCalculate(responseData.compareLifts[0]);
+    } catch (error) {
+      console.error("A problem occurred when making the API call:", error);
+    }
   };
 
   return (
