@@ -4,19 +4,11 @@ import getPercentStronger from "@/data/compare/strongerPercents";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
-    // Hardcoded for testing development purposes (Forms data will be used here)
-    // const age = "23";
-    // const sex = "0";
-    // const weight = "62";
-    // const bench = "100";
-    // const squat = "100";
-    // const deadlift = "100";
-    // const total = bench + squat + deadlift;
-    const { age, sex, weight, bench, squat, deadlift } = req.query;
+    const { age, sexStr, weight, bench, squat, deadlift } = req.query;
     const total = parseInt(bench) + parseInt(squat) + parseInt(deadlift);
 
-    console.log("RAW PARAMS: ", req.query)
-    console.log("PARAMS: ", age, sex, weight, bench, squat, deadlift, total);
+    // Binary Encodes sex for SQL query
+    const sex = sexStr === 'female' ? '1' : '0';
 
     // Get the age_div_id and weight_div_id
     const ageDivID = await getAgeDivID(age);
