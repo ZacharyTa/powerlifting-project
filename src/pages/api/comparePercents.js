@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     const total = parseInt(bench) + parseInt(squat) + parseInt(deadlift);
 
     // Binary Encodes sex for SQL query
-    const sex = sexStr === 'female' ? '1' : '0';
+    const sex = sexStr === "female" ? "1" : "0";
 
     // Get the age_div_id and weight_div_id
     const ageDivID = await getAgeDivID(age);

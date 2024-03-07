@@ -5,20 +5,22 @@ import Radio from "@/components/Radio";
 import { ATTRIBUTES, SEX } from "@/data/calculator/Calculations";
 import { useState } from "react";
 
-const Calculator = () => {
+const Calculator = ({ onCalculate }) => {
   const [current, setCurrent] = useState(SEX);
   const [data, setData] = useState(ATTRIBUTES);
 
-
   const handleSubmit = async () => {
-    const response = await fetch(`/api/comparePercents?age=${data.age}&sex=${current}&weight=${data.weight}&bench=${data.bench}&squat=${data.squat}&deadlift=${data.deadlift}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `/api/comparePercents?age=${data.age}&sex=${current}&weight=${data.weight}&bench=${data.bench}&squat=${data.squat}&deadlift=${data.deadlift}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
     const responseData = await response.json();
-    console.log(responseData);
+    onCalculate(responseData.compareLifts[0]);
   };
 
   return (
@@ -34,7 +36,7 @@ const Calculator = () => {
         <Input name="deadlift" maxLength={4} data={data} setData={setData} />
       </>
 
-      <Button name="Submit" onClick={handleSubmit}/>
+      <Button name="Submit" onClick={handleSubmit} />
     </div>
   );
 };
