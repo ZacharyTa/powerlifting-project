@@ -140,9 +140,9 @@ def getSex(sex: str, row: BeautifulSoup) -> int:
         headers = row.find_all("th")
         if len(headers) > 0:
             if headers[0].text.strip().find('Male') != -1:
-                return 1
-            elif headers[0].text.strip().find('Female') != -1:
                 return 0
+            elif headers[0].text.strip().find('Female') != -1:
+                return 1
             else:
                 return sex
         else:
