@@ -20,7 +20,7 @@ export default async function handler(req, res) {
           lbsToKg(deadlift),
         ];
 
-      let total = parseInt(bench) + parseInt(squat) + parseInt(deadlift);
+      const total = parseInt(bench) + parseInt(squat) + parseInt(deadlift);
 
       console.log(weight, bench, squat, deadlift);
 
