@@ -6,7 +6,6 @@ export default async function handler(req, res) {
   if (req.method === "GET") {
     try {
       let { age, sex, unit, weight, bench, squat, deadlift } = req.query;
-      const total = parseInt(bench) + parseInt(squat) + parseInt(deadlift);
 
       // Binary Encodes sex for SQL query
       sex = sex === "female" ? "1" : "0";
@@ -18,6 +17,8 @@ export default async function handler(req, res) {
         squat = Math.round(squat / 2.20462);
         deadlift = Math.round(deadlift / 2.20462);
       }
+
+      let total = parseInt(bench) + parseInt(squat) + parseInt(deadlift);
 
       // Get the age_div_id and weight_div_id
       const ageDivID = await getAgeDivID(age);
