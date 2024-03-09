@@ -43,10 +43,34 @@ const Calculator = ({ onCalculate }) => {
       </div>
       <>
         <Radio options={UNIT} current={unit} setCurrent={setUnit} />
-        <Input name="weight" maxLength={4} data={data} setData={setData} />
-        <Input name="squat" maxLength={4} data={data} setData={setData} />
-        <Input name="bench" maxLength={4} data={data} setData={setData} />
-        <Input name="deadlift" maxLength={4} data={data} setData={setData} />
+        <Input
+          name="weight"
+          maxLength={3}
+          data={data}
+          isDecimal={true}
+          setData={setData}
+        />
+        <Input
+          name="squat"
+          maxLength={4}
+          data={data}
+          isDecimal={true}
+          setData={setData}
+        />
+        <Input
+          name="bench"
+          maxLength={4}
+          data={data}
+          isDecimal={true}
+          setData={setData}
+        />
+        <Input
+          name="deadlift"
+          maxLength={4}
+          data={data}
+          isDecimal={true}
+          setData={setData}
+        />
       </>
 
       <Button name="Submit" onClick={handleSubmit} />

@@ -1,13 +1,24 @@
 "use client";
 
-const Input = ({ name, data, setData, maxLength }) => {
+const Input = ({ name, data, setData, maxLength, isDecimal }) => {
+  const decimalPart = isDecimal ? `(\\.\\d{0,2})?` : "";
+  const newMaxLength = isDecimal ? maxLength + 3 : maxLength;
+  const regex = new RegExp(`^\\d{0,${maxLength}}${decimalPart}$`);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    if (value === "" || regex.test(value)) {
+      setData({ ...data, [name]: value });
+    }
+  };
+
   return (
     <input
       className="bg-power-gray rounded-2xl p-4 placeholder:text-power-black/50 w-full"
       placeholder={name}
-      pattern="[0-9]*"
-      maxLength={maxLength}
-      onChange={(e) => setData({ ...data, [name]: e.target.value })}
+      maxLength={newMaxLength}
+      onChange={handleInputChange}
+      value={data[name]}
     />
   );
 };
