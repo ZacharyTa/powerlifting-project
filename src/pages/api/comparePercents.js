@@ -10,15 +10,19 @@ export default async function handler(req, res) {
       // Binary Encodes sex for SQL query
       sex = sex === "female" ? "1" : "0";
 
-      // Unit Conversion
-      if (unit === "lbs") {
-        weight = Math.round(weight / 2.20462);
-        bench = Math.round(bench / 2.20462);
-        squat = Math.round(squat / 2.20462);
-        deadlift = Math.round(deadlift / 2.20462);
-      }
+      // Unit conversion if necessary
+      const lbsToKg = (weight) => Math.round((weight / 2.20462) * 100) / 100;
+      if (unit === "lbs")
+        [weight, bench, squat, deadlift] = [
+          lbsToKg(weight),
+          lbsToKg(bench),
+          lbsToKg(squat),
+          lbsToKg(deadlift),
+        ];
 
       let total = parseInt(bench) + parseInt(squat) + parseInt(deadlift);
+
+      console.log(weight, bench, squat, deadlift);
 
       // Get the age_div_id and weight_div_id
       const ageDivID = await getAgeDivID(age);
