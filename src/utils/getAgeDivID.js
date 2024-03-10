@@ -8,7 +8,6 @@ const getAgeDivID = async (age) => {
     "src/app/sql/database/age_div.csv",
   );
 
-  console.log(ageDivPath);
   return new Promise((resolve) => {
     let ageDivID = "255"; // Default ID if not found
 

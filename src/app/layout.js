@@ -1,4 +1,5 @@
 import { Nunito } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${nunito.className} bg-power-white text-power-black h-screen`}
       >
+        <Toaster />
         {children}
       </body>
     </html>

@@ -1,5 +1,7 @@
 export const SEX = ["male", "female"];
 
+export const UNIT = ["kg", "lbs"];
+
 export const ATTRIBUTES = {
   age: "",
   sex: "",
@@ -7,4 +9,5 @@ export const ATTRIBUTES = {
   squat: "",
   bench: "",
   deadlift: "",
+  unit: "",
 };

@@ -1,26 +1,79 @@
-"use client";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import Radio from "@/components/Radio";
-import { SEX } from "@/data/calculator/Calculations";
+import { ATTRIBUTES, SEX, UNIT } from "@/data/calculator/Calculations";
 import { useState } from "react";
-const Calculator = () => {
-  const [current, setCurrent] = useState(null);
+import toast from "react-hot-toast";
+import { api } from "@/utils/api";
+
+const Calculator = ({ setPercentages }) => {
+  const [input, setInput] = useState(ATTRIBUTES);
+
+  const handleSubmit = async () => {
+    if (!Object.values(input).every((value) => value)) {
+      toast("❌ Please fill out everything.");
+      return;
+    }
+    const { items } = await api({
+      url: `/api/compare?age=${input.age}&sex=${input.sex}&unit=${input.unit}&weight=${input.weight}&bench=${input.bench}&squat=${input.squat}&deadlift=${input.deadlift}`,
+      method: "GET",
+    });
+
+    console.log(items);
+    setPercentages(items[0]);
+    // Pass the response data to the onCalculate function
+  };
 
   return (
     <div className="flex flex-col gap-y-7 items-center">
       <div className="flex flex-row gap-x-5">
-        <Input name="age" maxLength={3} />
-        <Radio options={SEX} current={current} setCurrent={setCurrent} />
+        <Input name="age" maxLength={3} data={input} setData={setInput} />
+        <Radio
+          options={SEX}
+          field="sex"
+          current={input}
+          setCurrent={setInput}
+        />
       </div>
-      <Input name="weight(kg)" maxLength={4} />
-      <Input name="squat(kg)" maxLength={4} />
-      <Input name="bench(kg)" maxLength={4} />
-      <Input name="deadlift(kg)" maxLength={4} />
+      <>
+        <Radio
+          options={UNIT}
+          field="unit"
+          current={input}
+          setCurrent={setInput}
+        />
+        <Input
+          name="weight"
+          maxLength={3}
+          data={input}
+          isDecimal={true}
+          setData={setInput}
+        />
+        <Input
+          name="squat"
+          maxLength={4}
+          data={input}
+          isDecimal={true}
+          setData={setInput}
+        />
+        <Input
+          name="bench"
+          maxLength={4}
+          data={input}
+          isDecimal={true}
+          setData={setInput}
+        />
+        <Input
+          name="deadlift"
+          maxLength={4}
+          data={input}
+          isDecimal={true}
+          setData={setInput}
+        />
+      </>
 
-      <Button name="Submit" />
+      <Button name="Submit" onClick={handleSubmit} />
     </div>
   );
 };
-
 export default Calculator;
