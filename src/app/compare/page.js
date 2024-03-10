@@ -9,17 +9,13 @@ import { useState } from "react";
 const Compare = () => {
   const [percentages, setPercentages] = useState({});
 
-  const updatePercentages = (newPercentages) => {
-    setPercentages(newPercentages);
-  };
-
   return (
     <Protected>
       <Page
         id="start"
         title="Let's get started"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor increfidrefidunt ut labore "
-        right={<Calculator onCalculate={updatePercentages} />}
+        right={<Calculator setPercentages={setPercentages} />}
       />
       <Page
         id="squat"

@@ -4,8 +4,9 @@ import Radio from "@/components/Radio";
 import { ATTRIBUTES, SEX, UNIT } from "@/data/calculator/Calculations";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { api } from "@/utils/api";
 
-const Calculator = ({ onCalculate }) => {
+const Calculator = ({ setPercentages }) => {
   const [input, setInput] = useState(ATTRIBUTES);
 
   const handleSubmit = async () => {
@@ -13,29 +14,14 @@ const Calculator = ({ onCalculate }) => {
       toast("❌ Please fill out everything.");
       return;
     }
-    try {
-      const response = await fetch(
-        `/api/comparePercents?age=${input.age}&sex=${input.sex}&unit=${input.unit}&weight=${input.weight}&bench=${input.bench}&squat=${input.squat}&deadlift=${input.deadlift}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
+    const { items } = await api({
+      url: `/api/compare?age=${input.age}&sex=${input.sex}&unit=${input.unit}&weight=${input.weight}&bench=${input.bench}&squat=${input.squat}&deadlift=${input.deadlift}`,
+      method: "GET",
+    });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        toast(`❌ ${response.status}`);
-        return;
-      }
-
-      // Pass the response data to the onCalculate function
-      onCalculate(data.compareLifts[0]);
-    } catch (error) {
-      console.error("A problem occurred when making the API call:", error);
-    }
+    console.log(items);
+    setPercentages(items[0]);
+    // Pass the response data to the onCalculate function
   };
 
   return (
