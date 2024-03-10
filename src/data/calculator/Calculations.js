@@ -9,4 +9,5 @@ export const ATTRIBUTES = {
   squat: "",
   bench: "",
   deadlift: "",
+  unit: "",
 };

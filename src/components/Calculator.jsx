@@ -6,14 +6,13 @@ import { ATTRIBUTES, SEX, UNIT } from "@/data/calculator/Calculations";
 import { useState } from "react";
 
 const Calculator = ({ onCalculate }) => {
-  const [sex, setSex] = useState(SEX);
-  const [unit, setUnit] = useState(UNIT[0]);
   const [data, setData] = useState(ATTRIBUTES);
 
   const handleSubmit = async () => {
     try {
+      data.sex;
       const response = await fetch(
-        `/api/comparePercents?age=${data.age}&sex=${sex}&unit=${unit}&weight=${data.weight}&bench=${data.bench}&squat=${data.squat}&deadlift=${data.deadlift}`,
+        `/api/comparePercents?age=${data.age}&sex=${data.sex}&unit=${data.unit}&weight=${data.weight}&bench=${data.bench}&squat=${data.squat}&deadlift=${data.deadlift}`,
         {
           method: "GET",
           headers: {
@@ -39,10 +38,15 @@ const Calculator = ({ onCalculate }) => {
     <div className="flex flex-col gap-y-7 items-center">
       <div className="flex flex-row gap-x-5">
         <Input name="age" maxLength={3} data={data} setData={setData} />
-        <Radio options={SEX} current={sex} setCurrent={setSex} />
+        <Radio options={SEX} field="sex" current={data} setCurrent={setData} />
       </div>
       <>
-        <Radio options={UNIT} current={unit} setCurrent={setUnit} />
+        <Radio
+          options={UNIT}
+          field="unit"
+          current={data}
+          setCurrent={setData}
+        />
         <Input
           name="weight"
           maxLength={3}
