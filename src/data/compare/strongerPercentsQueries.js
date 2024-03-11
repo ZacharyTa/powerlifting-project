@@ -3,11 +3,13 @@ function generateQuery(liftType) {
       (
         (SELECT COUNT(DISTINCT lifter_id) FROM lifts_table
         WHERE ? > ${liftType}
+        AND ${liftType} > 0
         AND age_div_id = ? 
         AND weight_div_id = ?
         ) /
         (SELECT COUNT(DISTINCT lifter_id) FROM lifts_table
         WHERE age_div_id = ?
+        AND ${liftType} > 0
         AND weight_div_id = ?
         ) * 100
       ) AS percentStronger${capitalizeFirstLetter(liftType)}
