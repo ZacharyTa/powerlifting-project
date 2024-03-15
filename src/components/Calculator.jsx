@@ -6,7 +6,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { api } from "@/utils/api";
 
-const Calculator = ({ setPercentages }) => {
+const Calculator = ({ setPercentages, setPage }) => {
   const [input, setInput] = useState(ATTRIBUTES);
 
   const handleSubmit = async () => {
@@ -14,13 +14,19 @@ const Calculator = ({ setPercentages }) => {
       toast("❌ Please fill out everything.");
       return;
     }
-    const { items } = await api({
+    setPage(1);
+    await api({
       url: `/api/compare?age=${input.age}&sex=${input.sex}&unit=${input.unit}&weight=${input.weight}&bench=${input.bench}&squat=${input.squat}&deadlift=${input.deadlift}`,
       method: "GET",
-    });
+    }).then((response) => {
+      if (response.message != "OK") {
+        toast("❌ Internal Server Error");
+        return;
+      }
 
-    console.log(items);
-    setPercentages(items[0]);
+      setPercentages(response.items[0]);
+      setPage(2);
+    });
     // Pass the response data to the onCalculate function
   };
 

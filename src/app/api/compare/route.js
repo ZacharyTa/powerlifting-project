@@ -28,8 +28,6 @@ export async function GET(req) {
 
     const total = parseInt(bench) + parseInt(squat) + parseInt(deadlift);
 
-    console.log(weight, bench, squat, deadlift);
-
     // Get the age_div_id and weight_div_id
     const ageDivID = await getAgeDivID(age);
     const weightDivID = await getWeightDivID(sex, weight, age);

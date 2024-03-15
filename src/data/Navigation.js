@@ -11,10 +11,6 @@ export const DASHBOARD = [
 
 export const COMPARE = [
   {
-    name: "start",
-    ref: "#start",
-  },
-  {
     name: "squat",
     ref: "#squat",
   },
