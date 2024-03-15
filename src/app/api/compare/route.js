@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import getAgeDivID from "@/utils/getAgeDivID";
 import getWeightDivID from "@/utils/getWeightDivID";
 import getPercentStronger from "@/data/compare/strongerPercents";
+import getPercentiles from "@/data/compare/percentiles";
 
 export async function GET(req) {
   const res = NextResponse;
@@ -28,8 +29,6 @@ export async function GET(req) {
 
     const total = parseInt(bench) + parseInt(squat) + parseInt(deadlift);
 
-    console.log(weight, bench, squat, deadlift);
-
     // Get the age_div_id and weight_div_id
     const ageDivID = await getAgeDivID(age);
     const weightDivID = await getWeightDivID(sex, weight, age);
@@ -43,6 +42,12 @@ export async function GET(req) {
       ageDivID,
       weightDivID,
     );
+
+    // Get the percentile averages within the same age and weight division
+    // const percentiles = await getPercentiles(
+    //   ageDivID,
+    //   weightDivID
+    // );
 
     return res.json({ message: "OK", items: results }, { status: 200 });
   } catch (error) {

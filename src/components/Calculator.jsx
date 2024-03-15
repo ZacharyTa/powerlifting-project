@@ -14,10 +14,17 @@ const Calculator = ({ setPercentages }) => {
       toast("❌ Please fill out everything.");
       return;
     }
+    // Get comparison percentages
     const { items } = await api({
       url: `/api/compare?age=${input.age}&sex=${input.sex}&unit=${input.unit}&weight=${input.weight}&bench=${input.bench}&squat=${input.squat}&deadlift=${input.deadlift}`,
       method: "GET",
     });
+
+    // // Get percentile averages
+    // const { percentiles } = await api({
+    //   url: `/api/compare/percentiles?age=${input.age}&sex=${input.sex}&unit=${input.unit}&weight=${input.weight}&bench=${input.bench}&squat=${input.squat}&deadlift=${input.deadlift}`,
+    //   method: "GET",
+    // });
 
     console.log(items);
     setPercentages(items[0]);

@@ -3,6 +3,7 @@ import Page from "@/components/compare/Page";
 import Protected from "@/components/Protected";
 import Percentage from "@/components/compare/Percentage";
 import Calculator from "@/components/Calculator";
+import Graph from "@/components/compare/Graph";
 import { Bs6Square } from "react-icons/bs";
 import { useState } from "react";
 
@@ -22,11 +23,17 @@ const Compare = () => {
         title="squat"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor increfidrefidunt ut labore "
         right={
-          <Percentage
-            percent={percentages.percentStrongerSquat}
-            icon={<Bs6Square className="text-6xl" />}
-            description="Lorem ipsume quia dolor sit amet"
-          />
+          <>
+            <Graph
+              size={[450, 300]}
+              percentagePercentile={percentages.percentStrongerSquat}
+            />
+            <Percentage
+              percent={percentages.percentStrongerSquat}
+              icon={<Bs6Square className="text-6xl" />}
+              description="Lorem ipsume quia dolor sit amet"
+            />
+          </>
         }
       />
       <Page
@@ -34,11 +41,17 @@ const Compare = () => {
         title="bench"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore "
         right={
-          <Percentage
-            percent={percentages.percentStrongerBench}
-            icon={<Bs6Square className="text-6xl" />}
-            description="Lorem ipsume quia dolor sit amet"
-          />
+          <>
+            <Graph
+              size={[450, 300]}
+              percentagePercentile={percentages.percentStrongerBench}
+            />
+            <Percentage
+              percent={percentages.percentStrongerBench}
+              icon={<Bs6Square className="text-6xl" />}
+              description="Lorem ipsume quia dolor sit amet"
+            />
+          </>
         }
       />
       <Page
