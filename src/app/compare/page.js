@@ -67,11 +67,18 @@ const Compare = () => {
         title="deadlift"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore "
         right={
-          <Percentage
-            percent={percentages.percentStrongerDeadlift}
-            icon={<Bs6Square className="text-6xl" />}
-            description="Lorem ipsume quia dolor sit amet"
-          />
+          <>
+            <Graph
+              size={[450, 300]}
+              percentagePercentile={percentages.percentStrongerDeadlift}
+              percentilesData={percentiles.deadlift}
+            />
+            <Percentage
+              percent={percentages.percentStrongerDeadlift}
+              icon={<Bs6Square className="text-6xl" />}
+              description="Lorem ipsume quia dolor sit amet"
+            />
+          </>
         }
       />
       <Page
@@ -79,11 +86,18 @@ const Compare = () => {
         title="total"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore "
         right={
-          <Percentage
-            percent={percentages.percentStrongerTotal}
-            icon={<Bs6Square className="text-6xl" />}
-            description="Lorem ipsume quia dolor sit amet"
-          />
+          <>
+            <Graph
+              size={[450, 300]}
+              percentagePercentile={percentages.percentStrongerTotal}
+              percentilesData={percentiles.total}
+            />
+            <Percentage
+              percent={percentages.percentStrongerTotal}
+              icon={<Bs6Square className="text-6xl" />}
+              description="Lorem ipsume quia dolor sit amet"
+            />
+          </>
         }
       />
       <Page

@@ -13,8 +13,11 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
       // Graph variables
       const xAxisHeight = size[1] - 60;
 
+      //SVG model variables
+      const svgSize = 10;
       const svgModelUrl = "/MalePowerlifter.svg"; // Local path for the SVG model
 
+      // Create an array of lifters with their lift values and percentile ranks
       const liftersData = percentilesData
         ? percentilesData.map((data, i) => ({
             id: i,
@@ -64,7 +67,7 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
 
       const x = d3
         .scaleLinear()
-        .domain([percentile1 - 10, percentile99 + 10]) // Use the 1st and 99th percentiles as the domain range
+        .domain([percentile1 - svgSize, percentile99 + svgSize]) // Use the 1st and 99th percentiles as the domain range
         .range([0, size[0]]);
 
       const userXPosition = x(
@@ -78,22 +81,51 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
       const xAxis = d3
         .axisBottom(x)
         .tickValues(tickValues)
-        .tickFormat((d) => `${d}kg`); // Format the tick values as kg
+        .tickFormat((d) => `${d}kg`); // Format the tick values as kg [CHANGE THIS TO LBS IF NECESSARY]
 
       // Add the x-axis to the svg
       svg
         .append("g")
         .attr("transform", `translate(0,${xAxisHeight})`)
-        .call(xAxis);
+        .call(xAxis)
+        .style("font-family", "Nunito, sans-serif");
 
-      svg
+      // Draw the line for the user's percentile placement
+      const line = svg
         .append("line")
-        .attr("x1", userXPosition)
-        .attr("y1", 0)
-        .attr("x2", userXPosition)
-        .attr("y2", xAxisHeight)
+        .attr("x1", 0)
+        .attr("y2", 40)
+        .attr("x2", 0)
+        .attr("y1", xAxisHeight)
         .attr("stroke", "black")
-        .attr("stroke-width", 2);
+        .attr("stroke-width", 4)
+        .attr("stroke-linecap", "round");
+
+      // Transition the line to the user's x position
+      line
+        .transition()
+        .delay(650)
+        .duration(1200) // The duration of the transition in milliseconds
+        .attr("x1", userXPosition) // End at the user's x position
+        .attr("x2", userXPosition);
+
+      // Draw the text "You are here"
+      const text = svg
+        .append("text")
+        .attr("x", userXPosition - 25) // Start at the left edge of the svg
+        .attr("y", 30) // Adjust this value to position the text above the line
+        .text("You are here")
+        .attr("text-anchor", "middle") // This centers the text at the given x position
+        .style("opacity", 0) // Start with the text invisible
+        .style("font-family", "Nunito, sans-serif");
+
+      // fade in transition for the text "You are here"
+      text
+        .transition()
+        .delay(1700)
+        .duration(500)
+        .attr("x", userXPosition)
+        .style("opacity", 0.75);
 
       svg
         .append("g")
@@ -105,8 +137,10 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
         .append("text")
         .attr("transform", `translate(${size[0] / 2}, ${xAxisHeight + 40})`) // Position the label
         .style("text-anchor", "middle") // Center the text
+        .style("font-family", "Nunito, sans-serif")
         .text("Lift Value"); // The label text
 
+      // Create a force simulation to position the lifters based on their lift values
       const simulation = d3
         .forceSimulation(liftersData)
         .force("x", d3.forceX((d) => x(d.lift_value)).strength(0.15)) // Push the points towards their lift_value
@@ -125,8 +159,8 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
                 .append("image") // Only append new elements on enter
                 .attr("class", "lifter")
                 .attr("xlink:href", svgModelUrl)
-                .attr("width", 20)
-                .attr("height", 20)
+                .attr("width", svgSize)
+                .attr("height", svgSize)
                 // Add mouseover and mouseout events for the tooltip
                 .on("mouseover", function (event, d) {
                   tooltip

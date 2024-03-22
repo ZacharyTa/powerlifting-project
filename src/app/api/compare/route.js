@@ -14,6 +14,7 @@ export async function GET(req) {
     let bench = req.nextUrl.searchParams.get("bench");
     let squat = req.nextUrl.searchParams.get("squat");
     let deadlift = req.nextUrl.searchParams.get("deadlift");
+
     // Binary Encodes sex for SQL query
     sex = sex === "female" ? "1" : "0";
 
@@ -46,10 +47,7 @@ export async function GET(req) {
     // Get the percentile averages within the same age and weight division
     const percentileResults = await getPercentiles(ageDivID, weightDivID);
 
-    //percentileResults.total = [{ ...lift_value: '45', ...percentile_rank: 1 }, ...}
-
     // lift Values Unit conversion if necessary
-    // Convert every lift_value to lbs if the unit is lbs
     if (unit === "lbs")
       for (const key in percentileResults) {
         if (percentileResults[key].length > 0) {
