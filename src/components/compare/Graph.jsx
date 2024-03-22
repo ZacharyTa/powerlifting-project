@@ -8,14 +8,14 @@ const Graph = ({ size, percentagePercentile, percentilesData, unit }) => {
     if (!percentilesData || !percentagePercentile) {
       return;
     } else if (d3Container.current) {
-      //console.log("percentagePercentile", percentagePercentile);
+      // console.log("percentagePercentile", percentagePercentile);
       console.log("percentilesData", percentilesData);
       d3.select(d3Container.current).selectAll("svg").remove();
 
       // Graph variables
       const xAxisHeight = size[1] - 60;
 
-      //SVG model variables
+      // SVG model variables
       const svgSize = 20;
       const svgModelUrl = "/MalePowerlifter.svg"; // Local path for the SVG model
 
