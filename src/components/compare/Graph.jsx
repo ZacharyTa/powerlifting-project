@@ -5,7 +5,9 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
   const d3Container = useRef(null);
 
   useEffect(() => {
-    if (d3Container.current) {
+    if (!percentilesData || !percentagePercentile) {
+      return;
+    } else if (d3Container.current) {
       //console.log("percentagePercentile", percentagePercentile);
       console.log("percentilesData", percentilesData);
       d3.select(d3Container.current).selectAll("svg").remove();
@@ -14,7 +16,7 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
       const xAxisHeight = size[1] - 60;
 
       //SVG model variables
-      const svgSize = 10;
+      const svgSize = 20;
       const svgModelUrl = "/MalePowerlifter.svg"; // Local path for the SVG model
 
       // Create an array of lifters with their lift values and percentile ranks
@@ -67,7 +69,7 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
 
       const x = d3
         .scaleLinear()
-        .domain([percentile1 - svgSize, percentile99 + svgSize]) // Use the 1st and 99th percentiles as the domain range
+        .domain([percentile1, percentile99]) // Use the 1st and 99th percentiles as the domain range
         .range([0, size[0]]);
 
       const userXPosition = x(
@@ -181,8 +183,12 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
             (exit) => exit.remove(), // Remove elements that no longer have data
           );
 
-        // Now update the position of both new and existing elements
-        lifters.attr("x", (d) => d.x - 10).attr("y", (d) => d.y - 10);
+        // Update the position of both new and existing elements
+        lifters
+          .attr("x", (d) => Math.max(svgSize, Math.min(size[0] - svgSize, d.x)))
+          .attr("y", (d) =>
+            Math.max(svgSize, Math.min(size[1] - svgSize, d.y)),
+          );
       }
 
       simulation.alpha(1).restart();
