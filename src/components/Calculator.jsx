@@ -6,7 +6,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { api } from "@/utils/api";
 
-const Calculator = ({ setPercentages, setPercentiles }) => {
+const Calculator = ({ setPercentages, setPercentiles, setUnit }) => {
   const [input, setInput] = useState(ATTRIBUTES);
 
   const handleSubmit = async () => {
@@ -23,6 +23,7 @@ const Calculator = ({ setPercentages, setPercentiles }) => {
     // Pass percentiles/percentages data back to the parent component
     setPercentiles(percentiles);
     setPercentages(items[0]);
+    setUnit(input.unit);
   };
 
   return (

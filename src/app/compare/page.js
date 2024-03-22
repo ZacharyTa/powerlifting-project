@@ -10,6 +10,7 @@ import { useState } from "react";
 const Compare = () => {
   const [percentages, setPercentages] = useState({});
   const [percentiles, setPercentiles] = useState({});
+  const [unit, setUnit] = useState({});
 
   return (
     <Protected>
@@ -21,6 +22,7 @@ const Compare = () => {
           <Calculator
             setPercentages={setPercentages}
             setPercentiles={setPercentiles}
+            setUnit={setUnit}
           />
         }
       />
@@ -34,6 +36,7 @@ const Compare = () => {
               size={[450, 300]}
               percentagePercentile={percentages.percentStrongerSquat}
               percentilesData={percentiles.squat}
+              unit={unit}
             />
             <Percentage
               percent={percentages.percentStrongerSquat}
@@ -53,6 +56,7 @@ const Compare = () => {
               size={[450, 300]}
               percentagePercentile={percentages.percentStrongerBench}
               percentilesData={percentiles.bench}
+              unit={unit}
             />
             <Percentage
               percent={percentages.percentStrongerBench}
@@ -72,6 +76,7 @@ const Compare = () => {
               size={[450, 300]}
               percentagePercentile={percentages.percentStrongerDeadlift}
               percentilesData={percentiles.deadlift}
+              unit={unit}
             />
             <Percentage
               percent={percentages.percentStrongerDeadlift}
@@ -91,6 +96,7 @@ const Compare = () => {
               size={[450, 300]}
               percentagePercentile={percentages.percentStrongerTotal}
               percentilesData={percentiles.total}
+              unit={unit}
             />
             <Percentage
               percent={percentages.percentStrongerTotal}

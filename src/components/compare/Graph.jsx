@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { useEffect, useRef } from "react";
 
-const Graph = ({ size, percentagePercentile, percentilesData }) => {
+const Graph = ({ size, percentagePercentile, percentilesData, unit }) => {
   const d3Container = useRef(null);
 
   useEffect(() => {
@@ -83,7 +83,7 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
       const xAxis = d3
         .axisBottom(x)
         .tickValues(tickValues)
-        .tickFormat((d) => `${d}kg`); // Format the tick values as kg [CHANGE THIS TO LBS IF NECESSARY]
+        .tickFormat((d) => `${d}${unit}`); // Format the tick values as kg
 
       // Add the x-axis to the svg
       svg
@@ -168,7 +168,7 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
                   tooltip
                     .style("visibility", "visible")
                     .text(
-                      `Percentile:${d.percentile_rank}, Lifts: ${d.lift_value}`,
+                      `Percentile: ${d.percentile_rank}, Lifts: ${d.lift_value}${unit}`,
                     );
                 })
                 .on("mousemove", function (event) {
