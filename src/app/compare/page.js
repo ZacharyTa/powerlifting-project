@@ -9,6 +9,7 @@ import { useState } from "react";
 
 const Compare = () => {
   const [percentages, setPercentages] = useState({});
+  const [percentiles, setPercentiles] = useState({});
 
   return (
     <Protected>
@@ -16,7 +17,12 @@ const Compare = () => {
         id="start"
         title="Let's get started"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor increfidrefidunt ut labore "
-        right={<Calculator setPercentages={setPercentages} />}
+        right={
+          <Calculator
+            setPercentages={setPercentages}
+            setPercentiles={setPercentiles}
+          />
+        }
       />
       <Page
         id="squat"
@@ -27,6 +33,7 @@ const Compare = () => {
             <Graph
               size={[450, 300]}
               percentagePercentile={percentages.percentStrongerSquat}
+              percentilesData={percentiles.squat}
             />
             <Percentage
               percent={percentages.percentStrongerSquat}
@@ -45,6 +52,7 @@ const Compare = () => {
             <Graph
               size={[450, 300]}
               percentagePercentile={percentages.percentStrongerBench}
+              percentilesData={percentiles.bench}
             />
             <Percentage
               percent={percentages.percentStrongerBench}

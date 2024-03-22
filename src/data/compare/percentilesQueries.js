@@ -1,21 +1,10 @@
-function generateRowTotalQuery(liftType) {
-  return `(SELECT COUNT(*) AS totalRows FROM lifts_table WHERE ${liftType} > 0 AND age_div_id = ? AND weight_div_id = ?) AS ${liftType}_totalRows`;
-}
-
 function generateQuery(liftType) {
-  let percentileQueries = [];
-
-  for (let p = 1; p <= 99; p += 2) {
-    // Note: You will calculate `n` dynamically in your application logic after executing the initialQuery
-    // This placeholder is to illustrate the concept
-    //let nPlaceholder = `CEILING((${p} / 100) * ?) - 1`;// Total rows = ?
-    let nPlaceholder = "100";
-    let query = `(SELECT ${liftType} FROM lifts_table WHERE ${liftType} > 0 AND age_div_id = ? AND weight_div_id = ? ORDER BY ${liftType} DESC LIMIT ${nPlaceholder}, 1) AS ${liftType}_percentile${p}`;
-    percentileQueries.push(query);
-  }
-  const percentileQuery = percentileQueries.join(" ,");
-
-  return percentileQuery;
+  return `
+  SELECT percentile_rank, lift_value 
+  FROM percentiles_table 
+  WHERE age_div_id = ? AND weight_div_id = ?
+  AND lift_type = '${liftType}';
+`;
 }
 
 export const PERCENTILES = [
@@ -37,19 +26,14 @@ export const PERCENTILES = [
   },
 ];
 
-function combineQueries(percentiles) {
-  let initialQuery = percentiles
-    .map((p) => generateRowTotalQuery(p.name))
-    .join(" ,");
-  let combinedQuery = percentiles.map((p) => p.query).join(" ,");
-  initialQuery = `SELECT ${initialQuery};`;
-  combinedQuery = `SELECT ${combinedQuery};`;
+function percentileQueries(percentiles) {
+  const percentileQuery = {};
 
-  // Return the complete query
-  // How to return a hash table of queries?
-  // return { initialQuery, combinedQuery };
-  //console.log(initialQuery);
-  return { initialQuery, combinedQuery };
+  percentiles.forEach((p) => {
+    percentileQuery[p.name] = p.query;
+  });
+
+  return percentileQuery;
 }
 
-export const combinedSQLQuery = combineQueries(PERCENTILES);
+export const percentileQuery = percentileQueries(PERCENTILES);

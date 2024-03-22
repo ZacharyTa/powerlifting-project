@@ -44,12 +44,25 @@ export async function GET(req) {
     );
 
     // Get the percentile averages within the same age and weight division
-    // const percentiles = await getPercentiles(
-    //   ageDivID,
-    //   weightDivID
-    // );
+    const percentileResults = await getPercentiles(ageDivID, weightDivID);
 
-    return res.json({ message: "OK", items: results }, { status: 200 });
+    //percentileResults.total = [{ ...lift_value: '45', ...percentile_rank: 1 }, ...}
+
+    // lift Values Unit conversion if necessary
+    // Convert every lift_value to lbs if the unit is lbs
+    if (unit === "lbs")
+      for (const key in percentileResults) {
+        if (percentileResults[key].length > 0) {
+          percentileResults[key].forEach((element) => {
+            element.lift_value = Math.round(element.lift_value * 2.20462);
+          });
+        }
+      }
+
+    return res.json(
+      { message: "OK", items: results, percentiles: percentileResults },
+      { status: 200 },
+    );
   } catch (error) {
     return res.json(
       { message: `Internal Server Error: ${error}` },
