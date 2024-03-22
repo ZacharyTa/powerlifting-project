@@ -10,7 +10,10 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
       console.log("percentilesData", percentilesData);
       d3.select(d3Container.current).selectAll("svg").remove();
 
-      const svgModelUrl = "MalePowerlifter.svg"; // Local path for the SVG model
+      // Graph variables
+      const xAxisHeight = size[1] - 60;
+
+      const svgModelUrl = "/MalePowerlifter.svg"; // Local path for the SVG model
 
       const liftersData = percentilesData
         ? percentilesData.map((data, i) => ({
@@ -47,9 +50,21 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
         ? percentilesData.find((d) => d.percentile_rank === 99).lift_value
         : null;
 
+      // Calculate the range of the lift values
+      const range = percentile99 - percentile1;
+      // Calculate the tick interval based on the range
+      const tickInterval = Math.round(range / 5, 1);
+
+      // Generate the tick values
+      const tickValues = d3.range(
+        percentile1,
+        percentile99 + tickInterval,
+        tickInterval,
+      );
+
       const x = d3
         .scaleLinear()
-        .domain([percentile1 - 10, percentile99 + 10]) // Use the 1st and 99th percentiles as the domain
+        .domain([percentile1 - 10, percentile99 + 10]) // Use the 1st and 99th percentiles as the domain range
         .range([0, size[0]]);
 
       const userXPosition = x(
@@ -59,18 +74,42 @@ const Graph = ({ size, percentagePercentile, percentilesData }) => {
         ),
       );
 
+      // Create the x-axis with the tick values
+      const xAxis = d3
+        .axisBottom(x)
+        .tickValues(tickValues)
+        .tickFormat((d) => `${d}kg`); // Format the tick values as kg
+
+      // Add the x-axis to the svg
+      svg
+        .append("g")
+        .attr("transform", `translate(0,${xAxisHeight})`)
+        .call(xAxis);
+
       svg
         .append("line")
         .attr("x1", userXPosition)
         .attr("y1", 0)
         .attr("x2", userXPosition)
-        .attr("y2", size[1])
+        .attr("y2", xAxisHeight)
         .attr("stroke", "black")
         .attr("stroke-width", 2);
 
+      svg
+        .append("g")
+        .attr("transform", `translate(0,${size[1]})`) // This moves the x-axis to the bottom of the svg
+        .call(d3.axisBottom(x)); // This creates the x-axis with the scale you defined
+
+      // Add x-axis label
+      svg
+        .append("text")
+        .attr("transform", `translate(${size[0] / 2}, ${xAxisHeight + 40})`) // Position the label
+        .style("text-anchor", "middle") // Center the text
+        .text("Lift Value"); // The label text
+
       const simulation = d3
         .forceSimulation(liftersData)
-        .force("x", d3.forceX((d) => x(d.lift_value)).strength(0.1)) // Push the points towards their lift_value
+        .force("x", d3.forceX((d) => x(d.lift_value)).strength(0.15)) // Push the points towards their lift_value
         .force("y", d3.forceY(size[1] / 2).strength(0.05))
         .force("collide", d3.forceCollide(10))
         .on("tick", ticked);
