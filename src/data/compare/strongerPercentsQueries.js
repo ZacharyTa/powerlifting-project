@@ -12,12 +12,8 @@ function generateQuery(liftType) {
         AND ${liftType} > 0
         AND weight_div_id = ?
         ) * 100
-      ) AS percentStronger${capitalizeFirstLetter(liftType)}
+      ) AS ${liftType}
     `;
-}
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export const PERCENTS = [
