@@ -14,15 +14,13 @@ const Calculator = ({ setPercentages, setPercentiles, setUnit }) => {
       toast("❌ Please fill out everything.");
       return;
     }
-    // Get comparison percentages
     const { items, percentiles } = await api({
       url: `/api/compare?age=${input.age}&sex=${input.sex}&unit=${input.unit}&weight=${input.weight}&bench=${input.bench}&squat=${input.squat}&deadlift=${input.deadlift}`,
       method: "GET",
     });
-
-    // Pass percentiles/percentages data back to the parent component
     setPercentiles(percentiles);
-    setPercentages(items[0]);
+    setPercentages(items);
+
     setUnit(input.unit);
   };
 

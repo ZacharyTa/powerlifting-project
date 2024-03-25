@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import getAgeDivID from "@/utils/getAgeDivID";
 import getWeightDivID from "@/utils/getWeightDivID";
-import getPercentStronger from "@/data/compare/strongerPercents";
-import getPercentiles from "@/data/compare/percentiles";
+import getPercentStronger from "@/utils/compare/percentages";
+import getPercentiles from "@/utils/compare/percentiles";
 
 export async function GET(req) {
   const res = NextResponse;

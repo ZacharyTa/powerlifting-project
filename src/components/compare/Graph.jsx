@@ -9,7 +9,7 @@ const Graph = ({ size, percentagePercentile, percentilesData, unit }) => {
       return;
     } else if (d3Container.current) {
       // console.log("percentagePercentile", percentagePercentile);
-      console.log("percentilesData", percentilesData);
+      // console.log("percentilesData", percentilesData);
       d3.select(d3Container.current).selectAll("svg").remove();
 
       // Graph variables
