@@ -27,5 +27,13 @@ export default async function getPercentiles(ageDivID, weightDivID) {
     }),
   );
 
+  for (const key in results) {
+    if (results[key].length > 0) {
+      results[key].forEach((element) => {
+        element.lift_value = parseFloat(element.lift_value).toFixed(1);
+      });
+    }
+  }
+
   return results;
 }
