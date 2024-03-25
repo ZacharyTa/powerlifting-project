@@ -1,43 +1,51 @@
 import mysql from "mysql2/promise";
-import fs from "fs";
-import path from "path";
+import { Connector } from "@google-cloud/cloud-sql-connector";
+import { GoogleAuth } from "google-auth-library";
 
 export async function query({ query, values = [] }) {
-  const caPath = path.resolve(process.env.SSL_CA_PATH);
-  const certPath = path.resolve(process.env.SSL_CERT_PATH);
-  const keyPath = path.resolve(process.env.SSL_KEY_PATH);
+  // Construct service account credentials object directly from environment variables
+  const keys = {
+    type: "service_account",
+    project_id: process.env.GCP_PROJECT_ID,
+    private_key_id: process.env.PRIVATE_KEY_ID,
+    private_key: process.env.GCP_PRIVATE_KEY.replace(/\\n/gm, "\n"),
+    client_email: process.env.GCP_SERVICE_ACCOUNT_EMAIL,
+    client_id: process.env.CLIENT_ID,
+    auth_uri: "https://accounts.google.com/o/oauth2/auth",
+    token_uri: "https://oauth2.googleapis.com/token",
+    auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+    client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
+  };
 
-  const ca = fs.readFileSync(caPath, "utf8");
-  const cert = fs.readFileSync(certPath, "utf8");
-  const key = fs.readFileSync(keyPath, "utf8");
+  // Initialize GoogleAuth with service account credentials
+  const auth = new GoogleAuth({
+    credentials: keys,
+    scopes: ["https://www.googleapis.com/auth/sqlservice.admin"],
+  });
 
-  if (
-    !fs.existsSync(caPath) ||
-    !fs.existsSync(certPath) ||
-    !fs.existsSync(keyPath)
-  ) {
-    return res.status(500).json({
-      error: "Certificate file paths are invalid or files do not exist.",
-    });
-  }
+  // Initialize  Cloud SQL Connector with custom GoogleAuth client
+  const connector = new Connector({ auth });
+
+  // Get the connection from Cloud SQL instance using the connector
+  const clientOpts = await connector.getOptions({
+    instanceConnectionName: process.env.CLOUD_SQL_CONNECTION_NAME,
+    ipType: "PUBLIC",
+  });
+
   try {
-    const connection = mysql.createPool({
-      port: process.env.DB_PORT,
-      host: process.env.DB_HOST,
+    // Create a pool using mysql2/promise and the options from the Cloud SQL Connector
+    const pool = mysql.createPool({
+      ...clientOpts,
       user: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      ssl: {
-        ca: ca,
-        key: key,
-        cert: cert,
-        // Bypass verification False (development only): Remove later
-        rejectUnauthorized: false,
-      },
+      // SSL configuration is handled automatically by the connector
     });
-    const [results] = await connection.execute(query, values);
+
+    const [results] = await pool.execute(query, values);
     return results;
   } catch (error) {
-    throw Error(error.message);
+    console.error("Database connection error:", error.message);
+    throw new Error(error.message);
   }
 }

@@ -13,7 +13,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@google-cloud/cloud-sql-connector": "^1.2.4",
     "csv-parser": "^3.0.0",
+    "google-auth-library": "^9.7.0",
     "mysql": "^2.18.1",
     "mysql2": "^3.9.2",
     "next": "14.0.3",
