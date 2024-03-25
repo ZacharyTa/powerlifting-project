@@ -19,7 +19,6 @@ const Calculator = ({ setPercentages }) => {
       method: "GET",
     });
 
-    //console.log("TEST", items[0]);
     setPercentages(items[0]);
     // Pass the response data to the onCalculate function
   };
