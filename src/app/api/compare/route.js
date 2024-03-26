@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import getAgeDivID from "@/utils/getAgeDivID";
 import getWeightDivID from "@/utils/getWeightDivID";
-import getPercentStronger from "@/data/compare/strongerPercents";
+import getPercentStronger from "@/utils/compare/percentages";
+import getPercentiles from "@/utils/compare/percentiles";
 
 export async function GET(req) {
   const res = NextResponse;
@@ -13,6 +14,7 @@ export async function GET(req) {
     let bench = req.nextUrl.searchParams.get("bench");
     let squat = req.nextUrl.searchParams.get("squat");
     let deadlift = req.nextUrl.searchParams.get("deadlift");
+
     // Binary Encodes sex for SQL query
     sex = sex === "female" ? "1" : "0";
 
@@ -28,8 +30,6 @@ export async function GET(req) {
 
     const total = parseInt(bench) + parseInt(squat) + parseInt(deadlift);
 
-    console.log(weight, bench, squat, deadlift);
-
     // Get the age_div_id and weight_div_id
     const ageDivID = await getAgeDivID(age);
     const weightDivID = await getWeightDivID(sex, weight, age);
@@ -44,7 +44,23 @@ export async function GET(req) {
       weightDivID,
     );
 
-    return res.json({ message: "OK", items: results }, { status: 200 });
+    // Get the percentile averages within the same age and weight division
+    const percentileResults = await getPercentiles(ageDivID, weightDivID);
+
+    // lift Values Unit conversion if necessary
+    if (unit === "lbs")
+      for (const key in percentileResults) {
+        if (percentileResults[key].length > 0) {
+          percentileResults[key].forEach((element) => {
+            element.lift_value = Math.round(element.lift_value * 2.20462);
+          });
+        }
+      }
+
+    return res.json(
+      { message: "OK", items: results, percentiles: percentileResults },
+      { status: 200 },
+    );
   } catch (error) {
     return res.json(
       { message: `Internal Server Error: ${error}` },
