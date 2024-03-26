@@ -12,15 +12,18 @@ function getPrivateKey() {
       const credFilePath = process.env.PRIVATE_KEY_PATH;
       const fileContent = fs.readFileSync(path.resolve(credFilePath), "utf8");
       privateKey = JSON.parse(fileContent)["private_key"];
-    } else if (process.env.GCP_PRIVATE_KEY) {
-      privateKey = process.env.GCP_PRIVATE_KEY.replace(/\\n/gm, "\n");
     } else {
-      throw new Error("No PRIVATE_KEY_PATH or GCP_PRIVATE_KEY provided");
+      throw new Error("Path is undefined");
     }
   } catch (error) {
     console.error(
-      `Error reading or parsing the credentials file or no GCP_PRIVATE_KEY provided: ${error.message}`,
+      `Error reading or parsing the credentials file: ${error.message}`,
     );
+    if (process.env.GCP_PRIVATE_KEY) {
+      privateKey = process.env.GCP_PRIVATE_KEY.replace(/\\n/gm, "\n");
+    } else {
+      throw error;
+    }
   }
   return privateKey;
 }
