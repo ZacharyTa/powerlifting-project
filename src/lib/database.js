@@ -1,43 +1,74 @@
 import mysql from "mysql2/promise";
-import fs from "fs";
 import path from "path";
+import fs from "fs";
+import { Connector } from "@google-cloud/cloud-sql-connector";
+import { GoogleAuth } from "google-auth-library";
+
+// Function to get the private key
+function getPrivateKey() {
+  let privateKey;
+  try {
+    if (path.isAbsolute(process.env.PRIVATE_KEY_PATH)) {
+      const credFilePath = process.env.PRIVATE_KEY_PATH;
+      const fileContent = fs.readFileSync(path.resolve(credFilePath), "utf8");
+      privateKey = JSON.parse(fileContent)["private_key"];
+    } else if (process.env.GCP_PRIVATE_KEY) {
+      privateKey = process.env.GCP_PRIVATE_KEY;
+    } else {
+      throw new Error("No PRIVATE_KEY_PATH or GCP_PRIVATE_KEY provided");
+    }
+  } catch (error) {
+    console.error(
+      `Error reading or parsing the credentials file or no GCP_PRIVATE_KEY provided: ${error.message}`,
+    );
+  }
+  return privateKey;
+}
+
+// Function to create the keys object
+function createKeysObject(privateKey) {
+  return {
+    type: "service_account",
+    project_id: process.env.GCP_PROJECT_ID,
+    private_key_id: process.env.PRIVATE_KEY_ID,
+    private_key: privateKey,
+    client_email: process.env.GCP_SERVICE_ACCOUNT_EMAIL,
+    client_id: process.env.CLIENT_ID,
+    auth_uri: "https://accounts.google.com/o/oauth2/auth",
+    token_uri: "https://oauth2.googleapis.com/token",
+    auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+    client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
+  };
+}
 
 export async function query({ query, values = [] }) {
-  const caPath = path.resolve(process.env.SSL_CA_PATH);
-  const certPath = path.resolve(process.env.SSL_CERT_PATH);
-  const keyPath = path.resolve(process.env.SSL_KEY_PATH);
-
-  const ca = fs.readFileSync(caPath, "utf8");
-  const cert = fs.readFileSync(certPath, "utf8");
-  const key = fs.readFileSync(keyPath, "utf8");
-
-  if (
-    !fs.existsSync(caPath) ||
-    !fs.existsSync(certPath) ||
-    !fs.existsSync(keyPath)
-  ) {
-    return res.status(500).json({
-      error: "Certificate file paths are invalid or files do not exist.",
-    });
-  }
   try {
-    const connection = mysql.createPool({
-      port: process.env.DB_PORT,
-      host: process.env.DB_HOST,
+    const privateKey = getPrivateKey();
+    const keys = createKeysObject(privateKey);
+
+    const auth = new GoogleAuth({
+      credentials: keys,
+      scopes: ["https://www.googleapis.com/auth/sqlservice.admin"],
+    });
+
+    const connector = new Connector({ auth });
+
+    const clientOpts = await connector.getOptions({
+      instanceConnectionName: process.env.CLOUD_SQL_CONNECTION_NAME,
+      ipType: "PUBLIC",
+    });
+
+    const pool = mysql.createPool({
+      ...clientOpts,
       user: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      ssl: {
-        ca: ca,
-        key: key,
-        cert: cert,
-        // Bypass verification False (development only): Remove later
-        rejectUnauthorized: true,
-      },
     });
-    const [results] = await connection.execute(query, values);
+
+    const [results] = await pool.execute(query, values);
     return results;
   } catch (error) {
-    throw Error(error.message);
+    console.error("Database connection error:", error.message);
+    throw new Error(error.message);
   }
 }
