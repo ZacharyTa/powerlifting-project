@@ -6,7 +6,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { api } from "@/utils/api";
 
-const Calculator = ({ setPercentages }) => {
+const Calculator = ({ setPercentages, setPercentiles, setUnit }) => {
   const [input, setInput] = useState(ATTRIBUTES);
 
   const handleSubmit = async () => {
@@ -14,13 +14,14 @@ const Calculator = ({ setPercentages }) => {
       toast("❌ Please fill out everything.");
       return;
     }
-    const { items } = await api({
+    const { items, percentiles } = await api({
       url: `/api/compare?age=${input.age}&sex=${input.sex}&unit=${input.unit}&weight=${input.weight}&bench=${input.bench}&squat=${input.squat}&deadlift=${input.deadlift}`,
       method: "GET",
     });
+    setPercentiles(percentiles);
+    setPercentages(items);
 
-    setPercentages(items[0]);
-    // Pass the response data to the onCalculate function
+    setUnit(input.unit);
   };
 
   return (
