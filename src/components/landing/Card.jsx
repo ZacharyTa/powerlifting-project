@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Button from "@/components/Button";
-import compare from "@/public/compare.webp";
+// import compare from "@/public/compare.webp";
 
 const Card = ({ title, description, img }) => {
   return (
