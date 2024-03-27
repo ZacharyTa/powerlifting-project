@@ -3,7 +3,7 @@ import Protected from "@/components/Protected";
 import Percentage from "@/components/compare/Percentage";
 import Calculator from "@/components/Calculator";
 import Graph from "@/components/compare/Graph";
-import { Bs6Square } from "react-icons/bs";
+import { IoMdPeople } from "react-icons/io";
 import { useState } from "react";
 import { SECTIONS } from "@/data/compare/Sections";
 
@@ -54,7 +54,7 @@ const Compare = () => {
             />
             <Percentage
               percent={percentages[section.title]}
-              icon={<Bs6Square className="text-6xl" />}
+              icon={<IoMdPeople className="text-6xl" />}
               description="Lorem ipsume quia dolor sit amet"
             />
           </div>
