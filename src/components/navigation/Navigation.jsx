@@ -3,10 +3,9 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { DASHBOARD, COMPARE, LEARN } from "@/data/Navigation";
+import { COMPARE, LEARN } from "@/data/Navigation";
 
 const PATHS = {
-  dashboard: DASHBOARD,
   compare: COMPARE,
   learn: LEARN,
 };

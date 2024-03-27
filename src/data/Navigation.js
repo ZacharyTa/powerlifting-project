@@ -1,14 +1,3 @@
-export const DASHBOARD = [
-  {
-    name: "compare",
-    ref: "/compare",
-  },
-  {
-    name: "learn",
-    ref: "/learn",
-  },
-];
-
 export const COMPARE = [
   {
     name: "start",
