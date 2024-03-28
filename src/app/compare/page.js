@@ -9,7 +9,9 @@ import { SECTIONS } from "@/data/compare/Sections";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
-const Section = ({ section, percentages, percentiles, unit }) => {
+const Section = ({ section, percentages, percentiles, unit, divisions }) => {
+  const description = dynamicDescription(section.title, percentages);
+
   const variants = {
     hidden: { opacity: 0, y: -100 },
     show: {
@@ -39,7 +41,7 @@ const Section = ({ section, percentages, percentiles, unit }) => {
         <div className="text-8xl font-bold mb-5 leading-snug">
           {section.title}
         </div>
-        <div>{section.description}</div>
+        <div>{description}</div>
       </div>
       <motion.div className="flex flex-col col-span-2 gap-y-5">
         <Graph
@@ -58,9 +60,20 @@ const Section = ({ section, percentages, percentiles, unit }) => {
   );
 };
 
+const dynamicDescription = (sectionTitle, percentages) => {
+  if (["squat", "bench", "deadlift", "total"].includes(sectionTitle)) {
+    const percentage = percentages[sectionTitle];
+    return `Your ${sectionTitle} is higher than ${percentage}% of competitive powerlifters in your division!`;
+  }
+  // Fallback to the default description for sections that don't require a dynamic description
+  return SECTIONS.find((section) => section.title === sectionTitle)
+    ?.description;
+};
+
 const Compare = () => {
   const [percentages, setPercentages] = useState(null);
   const [percentiles, setPercentiles] = useState(null);
+  const [divisions, setDivisions] = useState(null);
   const [unit, setUnit] = useState({});
 
   return (
@@ -72,14 +85,15 @@ const Compare = () => {
         <div className="w-2/3 col-span-2 h-fit text-2xl text-left inline-block items-center">
           <div className="text-8xl font-bold mb-5 leading-snug">start</div>
           <div>
-            Enter your weight information into the calculator to see how you
-            stack up against other weightlifting competitors in your category!
+            Enter your stats into the calculator to see how you stack up against
+            other USAPL powerlifters in your division!
           </div>
         </div>
         <div className="col-span-2">
           <Calculator
             setPercentages={setPercentages}
             setPercentiles={setPercentiles}
+            setDivisions={setDivisions}
             setUnit={setUnit}
           />
         </div>
