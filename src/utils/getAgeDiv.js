@@ -2,7 +2,7 @@ const csv = require("csv-parser");
 const fs = require("fs");
 const path = require("path");
 
-const getAgeDivID = async (age) => {
+const ageDivID = async (age) => {
   const ageDivPath = path.resolve(
     process.cwd(),
     "src/app/sql/database/age_div.csv",
@@ -10,6 +10,7 @@ const getAgeDivID = async (age) => {
 
   return new Promise((resolve) => {
     let ageDivID = "255"; // Default ID if not found
+    let ageDiv = "Unknown";
 
     fs.createReadStream(ageDivPath)
       .pipe(csv())
@@ -18,13 +19,14 @@ const getAgeDivID = async (age) => {
           parseInt(age) >= parseInt(row.min_age) &&
           parseInt(age) < parseInt(row.max_age)
         ) {
+          ageDiv = row.age_div;
           ageDivID = row.age_div_id;
         }
       })
       .on("end", () => {
-        resolve(ageDivID);
+        resolve([ageDiv, ageDivID]);
       });
   });
 };
 
-module.exports = getAgeDivID;
+module.exports = ageDivID;

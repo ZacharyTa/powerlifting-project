@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import getAgeDivID from "@/utils/getAgeDivID";
-import getWeightDivID from "@/utils/getWeightDivID";
+import getAgeDiv from "@/utils/getAgeDiv";
+import getWeightDiv from "@/utils/getWeightDiv";
 import getPercentStronger from "@/utils/compare/percentages";
 import getPercentiles from "@/utils/compare/percentiles";
 
@@ -31,8 +31,13 @@ export async function GET(req) {
     const total = parseInt(bench) + parseInt(squat) + parseInt(deadlift);
 
     // Get the age_div_id and weight_div_id
-    const ageDivID = await getAgeDivID(age);
-    const weightDivID = await getWeightDivID(sex, weight, age);
+    const [ageDiv, ageDivID] = await getAgeDiv(age);
+    const [weightDiv, weightDivID] = await getWeightDiv(sex, weight, age);
+
+    const divisions = {
+      age: ageDiv,
+      weight: weightDiv,
+    };
 
     // Calculate the percentage of lifters stronger than the user within the same age and weight division
     const results = await getPercentStronger(
@@ -61,6 +66,7 @@ export async function GET(req) {
       message: "OK",
       items: results,
       percentiles: percentileResults,
+      divisions,
       status: 200,
     });
   } catch (error) {
