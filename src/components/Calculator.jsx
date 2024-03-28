@@ -14,10 +14,18 @@ const Calculator = ({ setPercentages, setPercentiles, setUnit }) => {
       toast("❌ Please fill out everything.");
       return;
     }
-    const { items, percentiles } = await api({
+    toast.loading("Please wait...");
+    const { items, percentiles, status } = await api({
       url: `/api/compare?age=${input.age}&sex=${input.sex}&unit=${input.unit}&weight=${input.weight}&bench=${input.bench}&squat=${input.squat}&deadlift=${input.deadlift}`,
       method: "GET",
     });
+
+    if (status !== 200) {
+      toast("❌ Server Error, please try again later.");
+      return;
+    }
+    toast.dismiss();
+    toast("✅ Success!");
     setPercentiles(percentiles);
     setPercentages(items);
 
