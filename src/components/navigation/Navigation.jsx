@@ -3,10 +3,9 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { DASHBOARD, COMPARE, LEARN } from "@/data/Navigation";
+import { COMPARE, LEARN } from "@/data/Navigation";
 
 const PATHS = {
-  dashboard: DASHBOARD,
   compare: COMPARE,
   learn: LEARN,
 };
@@ -19,7 +18,7 @@ const Navigation = () => {
       className="w-full flex items-center p-3 bg-gradient-to-r bg-power-gray fixed top-0 z-50"
     >
       <Navbar.Brand>
-        <Link href="/dashboard">
+        <Link href="/">
           <div className="text-power-black text-2xl ml-10 font-bold">
             Barbell Metrics
           </div>
