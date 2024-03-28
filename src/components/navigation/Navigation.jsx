@@ -18,7 +18,7 @@ const Navigation = () => {
       className="w-full flex items-center p-3 bg-gradient-to-r bg-power-gray fixed top-0 z-50"
     >
       <Navbar.Brand>
-        <Link href="/dashboard">
+        <Link href="/">
           <div className="text-power-black text-2xl ml-10 font-bold">
             Barbell Metrics
           </div>
