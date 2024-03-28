@@ -135,15 +135,16 @@ const Compare = () => {
           conclusion
           <p className="text-2xl mt-4 text-center mx-auto max-w-screen-md">
             Remember that these numbers are comparing yourself to the powerhouse
-            league of powerlifting! We're talking about—top-notch, seriously{" "}
+            league of powerlifting! We&apos;re talking about—top-notch,
+            seriously{" "}
             <u>
               <b>competitive</b>
             </u>{" "}
             folks. Now, if those numbers seem a bit intimidating, keep in mind,
-            you're being compared to the best of the best. So if these numbers
-            are lower than you hoped, don't get discouraged. Set your own
-            records, Keep lifting, keep pushing, you can do more than you think.
-            Remember, it's all about personal growth!
+            you&apos;re being compared to the best of the best. So if these
+            numbers are lower than you hoped, don&apos;t get discouraged. Set
+            your own records, Keep lifting, keep pushing, you can do more than
+            you think. Remember, it&apos;s all about personal growth!
           </p>
         </div>
       )}
