@@ -43,7 +43,13 @@ const Calculator = ({
   return (
     <div className="flex flex-col gap-y-7 items-center">
       <div className="flex flex-row gap-x-5">
-        <Input name="age" maxLength={3} data={input} setData={setInput} />
+        <Input
+          name="age"
+          maxLength={3}
+          data={input}
+          setData={setInput}
+          tooltip="Enter your age in years (e.g., 30)"
+        />
         <Radio
           options={SEX}
           field="sex"
@@ -64,6 +70,7 @@ const Calculator = ({
           data={input}
           isDecimal={true}
           setData={setInput}
+          tooltip={`Enter your bodyweight in ${input.unit} (e.g., 30${input.unit})`}
         />
         <Input
           name="squat"
@@ -71,6 +78,7 @@ const Calculator = ({
           data={input}
           isDecimal={true}
           setData={setInput}
+          tooltip={`Enter your squat in ${input.unit} (e.g., 30${input.unit})`}
         />
         <Input
           name="bench"
@@ -78,6 +86,7 @@ const Calculator = ({
           data={input}
           isDecimal={true}
           setData={setInput}
+          tooltip={`Enter your bench in ${input.unit} (e.g., 30${input.unit})`}
         />
         <Input
           name="deadlift"
@@ -85,6 +94,7 @@ const Calculator = ({
           data={input}
           isDecimal={true}
           setData={setInput}
+          tooltip={`Enter your deadlift in ${input.unit} (e.g., 30${input.unit})`}
         />
       </>
 
