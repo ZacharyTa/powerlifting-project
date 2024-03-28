@@ -57,10 +57,12 @@ export async function GET(req) {
         }
       }
 
-    return res.json(
-      { message: "OK", items: results, percentiles: percentileResults },
-      { status: 200 },
-    );
+    return res.json({
+      message: "OK",
+      items: results,
+      percentiles: percentileResults,
+      status: 200,
+    });
   } catch (error) {
     return res.json(
       { message: `Internal Server Error: ${error}` },
