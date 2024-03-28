@@ -37,6 +37,7 @@ class MySQLGCloud:
         self.__lifts_table = 'lifts_table'
         self.__agediv_table = 'agediv_table'
         self.__weightdiv_table = 'weightdiv_table'
+        self.__percentiles_table = 'percentiles_table'
         print("Connecting to MySQL DB...")
         try:
             
@@ -121,6 +122,16 @@ class MySQLGCloud:
                 FOREIGN KEY(competition_id) REFERENCES {self.__competitions_table}(competition_id),
                 FOREIGN KEY(age_div_id) REFERENCES {self.__agediv_table}(age_div_id),
                 FOREIGN KEY(weight_div_id) REFERENCES {self.__weightdiv_table}(weight_div_id)
+            );""",
+            f"""CREATE TABLE IF NOT EXISTS {self.__percentiles_table} (
+                age_div_id TINYINT UNSIGNED NOT NULL,
+                weight_div_id TINYINT UNSIGNED NOT NULL,
+                lift_type ENUM('total', 'bench', 'squat', 'deadlift') NOT NULL,
+                percentile_rank INT,
+                lift_value DECIMAL(10, 2),
+                PRIMARY KEY (age_div_id, weight_div_id, lift_type, percentile_rank),
+                FOREIGN KEY(age_div_id) REFERENCES {self.__agediv_table}(age_div_id),
+                FOREIGN KEY(weight_div_id) REFERENCES {self.__weightdiv_table}(weight_div_id)
             );"""
         ]
 
@@ -137,7 +148,7 @@ class MySQLGCloud:
         self.__commit()
         print('Initializing Tables Success')
 
-    # Index the columns in the lifts table for faster querying
+    # Index the columns in the table for faster querying
     def index_tables(self) -> None:
         """
         Indexes lifts_table's columns:
@@ -153,6 +164,10 @@ class MySQLGCloud:
             f"""CREATE INDEX idx_bench ON {self.__lifts_table} (bench);""",
             f"""CREATE INDEX idx_deadlift ON {self.__lifts_table} (deadlift);""",
             f"""CREATE INDEX idx_squat ON {self.__lifts_table} (squat);"""
+            f"""CREATE INDEX idx_competition_id ON {self.__lifts_table} (competition_id);""",
+
+            f"""CREATE INDEX idx_age_div_id ON {self.__percentiles_table} (age_div_id);""",
+            f"""CREATE INDEX idx_weight_div_id ON {self.__percentiles_table} (weight_div_id);"""
         ]
 
         try:
@@ -380,14 +395,92 @@ class MySQLGCloud:
         finally:
             self.__commit()
 
-    # Drops all tables in the database (Used for testing purposes only)
-    def drop_all_tables(self) -> None:
+    # Calculate percentiles for each lift in each age/weight division from lifts table
+    def processDivsPercentiles(self) -> None:
+        print("Processing Age/Weight Divisions Percentiles...Waiting")
+        
         try:
             with self.engine.connect() as self.conn:
-                self._execute_query(f"DROP TABLE {self.__lifts_table}")
-                self._execute_query(f"DROP TABLE {self.__competitions_table}")
-                self._execute_query(f"DROP TABLE {self.__agediv_table}")
-                self._execute_query(f"DROP TABLE {self.__weightdiv_table}")
+
+                # Get all age and weight divisions
+                age_divs = pd.read_sql_query(f'SELECT age_div_id from {self.__agediv_table}', self.conn)
+                weight_divs = pd.read_sql_query(f'SELECT weight_div_id from {self.__weightdiv_table}', self.conn)
+
+                # Calculate percentile values for each lift from each age and weight division
+                for age_div in age_divs.itertuples():
+                    for weight_div in weight_divs.itertuples():
+                        self.calculatePercentiles(age_div.age_div_id, weight_div.weight_div_id)
+
+        except Error as e:
+            print(f"The error '{e}' occurred")
+        
+        finally:
+            self.__commit()
+
+        print("Processing Age/Weight Divisions Percentiles...Success")
+
+    # Calculate the percentile values for each lift from passed in age and weight division id's
+    def calculatePercentiles(self, age_div_id, weight_div_id) -> None:
+        print(f"Calculating Percentiles for age divsion:({age_div_id}), weight division:({weight_div_id})")
+
+        lifts = ['total', 'bench', 'squat', 'deadlift']
+
+        percentiles_df = pd.DataFrame({
+            'age_div_id': [],
+            'weight_div_id': [],
+            'lift_type' : [],
+            'percentile_rank': [],
+            'lift_value': []
+            })
+        
+        try:
+        
+            for lift in lifts:
+
+                # Calculate total number of rows for the current lift, age_div, and weight_div
+                count_query = f"SELECT COUNT(*) FROM {self.__lifts_table} WHERE age_div_id = {age_div_id} AND weight_div_id = {weight_div_id} and {lift} > 0"
+                total_rows = self._execute_query(count_query).first()[0]
+                
+                if total_rows == 0: continue
+
+                # Calculate and insert percentile values for each percentile 1-99 odd numbers
+                for percentile in range(1, 100, 2):
+                    row_number = round((percentile / 100.0) * total_rows) - 1
+
+                    if row_number < 0: row_number = 0
+
+                    percentile_query = f"""
+                    SELECT {lift}
+                    FROM {self.__lifts_table}
+                    WHERE age_div_id = {age_div_id} AND weight_div_id = {weight_div_id} AND {lift} > 0
+                    ORDER BY {lift} ASC
+                    LIMIT {row_number}, 1
+                    """
+                    result = self._execute_query(percentile_query).fetchone()
+
+                    # If results then insert row of data into temporary percentiles dataframe to be batch inserted into percentiles table
+                    if result:
+                        lift_value = result[0]
+                        percentiles_df.loc[len(percentiles_df)] = [age_div_id, weight_div_id, lift, percentile, lift_value]
+                    else:
+                        print(f"No results for query: {percentile_query}")
+
+            # Batch insert percentiles dataframe into percentiles table
+            percentiles_df.to_sql(self.__percentiles_table, con=self.engine, if_exists='append', index=False, chunksize=1000)
+
+        except Error as e:
+            print(f"The error '{e}' occurred")
+
+    # Drops all tables in the database (Used for testing purposes only)
+    def drop_all_tables(self) -> None:
+        print("DROP ALL TABLES...Waiting")
+        try:
+            with self.engine.connect() as self.conn:
+                self._execute_query(f"DROP TABLE IF EXISTS {self.__lifts_table}")
+                self._execute_query(f"DROP TABLE IF EXISTS {self.__competitions_table}")
+                self._execute_query(f"DROP TABLE IF EXISTS {self.__agediv_table}")
+                self._execute_query(f"DROP TABLE IF EXISTS {self.__weightdiv_table}")
+                self._execute_query(f"DROP TABLE IF EXISTS {self.__percentiles_table}")
                 self.conn.commit()
                 print("All tables were dropped successfully")
         except Error as e:

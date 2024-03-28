@@ -14,6 +14,7 @@ def main():
     db.update_comp_db()
     db.update_div_tables()
     db.process_comp_db()
+    db.processDivsPercentiles()
 
     # db.drop_all_tables()
 
