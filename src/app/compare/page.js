@@ -4,7 +4,7 @@ import Percentage from "@/components/compare/Percentage";
 import Calculator from "@/components/Calculator";
 import Graph from "@/components/compare/Graph";
 import { IoMdPeople } from "react-icons/io";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SECTIONS } from "@/data/compare/Sections";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -75,6 +75,13 @@ const Compare = () => {
   const [percentiles, setPercentiles] = useState(null);
   const [divisions, setDivisions] = useState(null);
   const [unit, setUnit] = useState({});
+  const firstSectionRef = useRef(null);
+
+  useEffect(() => {
+    if (percentages && percentiles && divisions && firstSectionRef.current) {
+      firstSectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [percentages, percentiles, divisions]);
 
   return (
     <Protected>
@@ -99,6 +106,15 @@ const Compare = () => {
         </div>
       </div>
 
+      {percentages && percentiles && divisions && (
+        <div
+          ref={firstSectionRef}
+          className="flex items-center justify-center h-screen text-4xl font-bold mb-5 text-gray-700 px-5"
+        >
+          {`If you were to compete, you would be in the ${divisions.weight} ${divisions.age} division...`}
+        </div>
+      )}
+
       {percentages &&
         percentiles &&
         SECTIONS.map((section, index) => (
@@ -110,6 +126,27 @@ const Compare = () => {
             unit={unit}
           />
         ))}
+
+      {percentages && percentiles && divisions && (
+        <div
+          id="conclusion"
+          className="flex flex-col items-center justify-center text-8xl font-bold"
+        >
+          conclusion
+          <p className="text-2xl mt-4 text-center mx-auto max-w-screen-md">
+            Remember that these numbers are comparing yourself to the powerhouse
+            league of powerlifting! We're talking about—top-notch, seriously{" "}
+            <u>
+              <b>competitive</b>
+            </u>{" "}
+            folks. Now, if those numbers seem a bit intimidating, keep in mind,
+            you're being compared to the best of the best. So if these numbers
+            are lower than you hoped, don't get discouraged. Set your own
+            records, Keep lifting, keep pushing, you can do more than you think.
+            Remember, it's all about personal growth!
+          </p>
+        </div>
+      )}
     </Protected>
   );
 };
