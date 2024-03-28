@@ -13,12 +13,14 @@ const Calculator = ({
   setUnit,
 }) => {
   const [input, setInput] = useState(ATTRIBUTES);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
     if (!Object.values(input).every((value) => value)) {
       toast("❌ Please fill out everything.");
       return;
     }
+    setIsLoading(true);
     toast.loading("Please wait...");
     const { items, percentiles, divisions, status } = await api({
       url: `/api/compare?age=${input.age}&sex=${input.sex}&unit=${input.unit}&weight=${input.weight}&bench=${input.bench}&squat=${input.squat}&deadlift=${input.deadlift}`,
@@ -31,6 +33,7 @@ const Calculator = ({
     }
     toast.dismiss();
     toast("✅ Success!");
+    setIsLoading(false);
     setPercentiles(percentiles);
     setPercentages(items);
     setDivisions(divisions);
@@ -85,7 +88,7 @@ const Calculator = ({
         />
       </>
 
-      <Button name="Submit" onClick={handleSubmit} />
+      <Button name="Submit" onClick={handleSubmit} disabled={isLoading} />
     </div>
   );
 };
