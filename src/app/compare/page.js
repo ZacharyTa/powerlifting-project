@@ -18,14 +18,14 @@ const Section = ({ section, percentages, percentiles, unit, divisions }) => {
       opacity: 1,
       x: 0,
       transition: {
-        duration: 0.7,
+        duration: 0.5,
       },
     },
   };
 
   const [ref, inView] = useInView({
     triggerOnce: true,
-    threshold: 0.9,
+    threshold: 0.8,
   });
 
   return (
