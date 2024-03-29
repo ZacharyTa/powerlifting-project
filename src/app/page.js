@@ -13,10 +13,10 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="w-full flex items-center justify-center text-4xl my-5">
+      <div className="w-full flex items-center justify-center text-6xl font-bold my-5">
         See Articles
       </div>
-      <div className="grid grid-cols-2 gap-x-10 mx-5">
+      <div className="grid grid-cols-2 gap-x-10 mx-5 my-[5%]">
         {ARTICLES.map((article, index) => (
           <Card
             key={index}
