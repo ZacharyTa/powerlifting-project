@@ -2,7 +2,7 @@ const csv = require("csv-parser");
 const fs = require("fs");
 const path = require("path");
 
-const getWeightDivID = async (sex, weight, age) => {
+const getWeightDiv = async (sex, weight, age) => {
   const weightDivPath = path.resolve(
     process.cwd(),
     "src/app/sql/database/weight_div.csv",
@@ -12,6 +12,7 @@ const getWeightDivID = async (sex, weight, age) => {
 
   return new Promise((resolve) => {
     let weightDivID = "255"; // Default ID if not found
+    let weightDiv = "Unknown";
     fs.createReadStream(weightDivPath)
       .pipe(csv())
       .on("data", (row) => {
@@ -21,13 +22,14 @@ const getWeightDivID = async (sex, weight, age) => {
           parseInt(sex) === parseInt(row.sex) &&
           isYouth === parseInt(row.is_youth)
         ) {
+          weightDiv = row.weight_div;
           weightDivID = row.weight_div_id;
         }
       })
       .on("end", () => {
-        resolve(weightDivID);
+        resolve([weightDiv, weightDivID]);
       });
   });
 };
 
-module.exports = getWeightDivID;
+module.exports = getWeightDiv;
