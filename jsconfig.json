@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
+    "jsx": "react",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/public/*": ["./public/*"]
+      "@/public/*": ["./public/*"],
+      "@/services/*": ["src/app/articles/services/*"],
+      "@/models/*": ["src/app/articles/models/*"]
     }
   }
 }
