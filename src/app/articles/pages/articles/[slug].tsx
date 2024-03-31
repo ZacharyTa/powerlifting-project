@@ -49,9 +49,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<ArticlePageProps> = async ({
   params,
 }) => {
+  // params.slug will be the slug from the URL
   const slug = params?.slug as string;
+
+  // Use your service function to get the article data by slug
   const article = await getArticleBySlug(slug);
 
+  // Pass the article data as props to the page component
   return {
     props: {
       article,
