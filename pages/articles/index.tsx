@@ -1,8 +1,8 @@
 import React from "react";
 import { GetStaticProps } from "next";
 import Link from "next/link";
-import { Article } from "../../models/Article";
-import { getAllArticles } from "../../services/articleService"; // This would be a function you create to read all articles
+import { Article } from "../../src/app/articles/models/Article";
+import { getAllArticles } from "../../src/app/articles/services/articleService"; // This would be a function you create to read all articles
 
 interface ArticlesProps {
   articles: Article[];

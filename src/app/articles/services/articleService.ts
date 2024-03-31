@@ -5,18 +5,25 @@ import { remark } from "remark";
 import html from "remark-html";
 import { Article } from "../models/Article";
 
-const articlesDirectory = path.join(process.cwd(), "articles"); // Replace with your articles directory
+const articlesDirectory = path.join(process.cwd(), "public/articles"); // Replace with your articles directory
 
 export function getArticleSlugs() {
-  return fs
-    .readdirSync(articlesDirectory)
-    .filter((file) => path.extname(file) === ".md");
+  // Get file names under /articles
+  const fileNames = fs.readdirSync(articlesDirectory);
+  return fileNames.map((fileName) => {
+    // Remove ".md" from file name to get slugs
+    return fileName.replace(/\.md$/, "");
+  });
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article> {
   const fullPath = path.join(articlesDirectory, `${slug}.md`);
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
+
+  if (!data.id) {
+    throw new Error(`Missing 'id' in the frontmatter of ${slug}.md`);
+  }
 
   const processedContent = await remark().use(html).process(content);
   const contentHtml = processedContent.toString();
@@ -33,17 +40,6 @@ export async function getArticleBySlug(slug: string): Promise<Article> {
     tags: data.tags, // Add the tags from the front matter
   };
 }
-
-// Inside of models/Article.ts
-// id: string; // Unique identifier for the article
-// slug: string; // URL-friendly identifier used in dynamic routes
-// title: string; // Title of the article
-// excerpt: string; // A short summary or teaser of the article
-// content: string; // The HTML or Markdown content of the article
-// publishDate: string; // ISO date string when the article was published
-// author: string; // Name of the author
-// coverImage?: string; // Optional URL to a cover image for the article
-// tags?: string[]; // Optional array of tags related to the article
 
 export async function getAllArticles(): Promise<Article[]> {
   const slugs = getArticleSlugs();

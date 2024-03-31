@@ -1,5 +1,5 @@
-import Card from "@/components/landing/Card";
-import { ARTICLES } from "@/data/landing/Articles";
+import Card from "../components/landing/Card";
+import { ARTICLES } from "../data/landing/Articles";
 
 export default function Home() {
   return (

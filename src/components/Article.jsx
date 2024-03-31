@@ -4,7 +4,7 @@ export default function Article({ title, content }) {
       <h1 className="text-4xl font-bold leading-tight mb-4">{title}</h1>
       <div className="prose lg:prose-xl">
         {/* Temporary text for testing */}
-        <p>Article Component</p>
+        <p> Article Component </p>
         {/* Content will be rendered here */}
         <div dangerouslySetInnerHTML={{ __html: content }} />
       </div>

@@ -1,4 +1,5 @@
 ---
+id: 1
 title: "The Basics of Building Strength: From Beginner to Powerlifter"
 excerpt: "Embark on a transformative strength training journey from basic workouts to the discipline of powerlifting, and discover the profound benefits of this fitness pursuit."
 publishDate: "2024-03-30"

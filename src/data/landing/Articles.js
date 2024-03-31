@@ -1,4 +1,4 @@
-import compare from "@/public/compare.webp";
+import compare from "../../../public/compare.webp";
 
 export const ARTICLES = [
   {
