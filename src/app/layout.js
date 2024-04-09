@@ -1,7 +1,8 @@
+import Head from "next/head";
 import { Nunito } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
-import Footer from "@/components/Footer";
+import Footer from "../components/Footer";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -18,6 +19,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <Head>
+        <script
+          defer
+          src="https://analytics.us.umami.is/script.js"
+          data-website-id="3e5c516d-d699-4bef-9aac-cf32e92e3c86"
+        ></script>
+      </Head>
       <body
         className={`${nunito.className} bg-power-white text-power-black h-screen`}
       >
